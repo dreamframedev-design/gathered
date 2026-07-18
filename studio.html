@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gathered Studio | Founders' Atelier</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="4" y="2" width="56" height="60" rx="10" fill="%230B1834"/><text x="32" y="44" font-family="Georgia,serif" font-size="34" fill="%23C6A15B" text-anchor="middle">G</text></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* ============ GATHERED STUDIO :: atelier theme ============ */
+:root{
+  --indigo:#14264E;--indigo-deep:#0B1834;--indigo-soft:#23386B;--night:#080F22;
+  --ivory:#F5EFE3;--bone:#FBF7EE;--ink:#20201C;
+  --brass:#C6A15B;--brass-deep:#A67F3B;--palm:#41604E;--clay:#A9502F;
+  --line:rgba(198,161,91,.18);--line2:rgba(245,239,227,.09);
+  --serif:"Fraunces",Georgia,serif;--sans:"Inter",-apple-system,"Segoe UI",sans-serif;
+  --cjk:"Noto Serif TC","Songti TC","SimSun","MS Mincho",serif;
+  --ease:cubic-bezier(.22,.9,.28,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--night);color:var(--ivory);font-family:var(--sans);font-weight:300;
+  line-height:1.6;-webkit-font-smoothing:antialiased;overflow:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:4000;opacity:.4;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .04 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+h1,h2,h3,.serif{font-family:var(--serif);font-weight:400}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit}
+::selection{background:var(--brass);color:var(--night)}
+svg{display:block}
+.label{font-size:.66rem;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--brass)}
+.scroll::-webkit-scrollbar{width:8px;height:8px}
+.scroll::-webkit-scrollbar-thumb{background:var(--indigo-soft);border-radius:4px}
+.scroll::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;
+  padding:12px 22px;border-radius:100px;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;font-weight:500;
+  transition:transform .3s var(--ease),box-shadow .3s,background .3s,color .3s;
+}
+.btn-gold{background:var(--brass);color:var(--night);box-shadow:0 6px 18px rgba(198,161,91,.25)}
+.btn-gold:hover{background:#D4B173;transform:translateY(-2px)}
+.btn-line{background:transparent;color:var(--ivory);border:1px solid var(--line);border-radius:100px}
+.btn-line:hover{border-color:var(--brass);color:var(--brass)}
+.btn-ghost{background:transparent;color:#8E97AC}
+.btn-ghost:hover{color:var(--ivory)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ============ auth gate ============ */
+#gate{
+  position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(70% 100% at 50% -20%,#1B2F5E 0%,var(--indigo-deep) 55%,var(--night) 100%);
+  transition:opacity .7s var(--ease),visibility .7s;
+}
+#gate.hidden{opacity:0;visibility:hidden}
+.gate-card{width:min(400px,92vw);text-align:center;position:relative;z-index:2}
+.gate-tile{width:66px;height:86px;margin:0 auto 26px;border-radius:9px;perspective:600px}
+.gate-tile .in{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:gflip 5s var(--ease) infinite}
+@keyframes gflip{0%,38%{transform:rotateY(0)}50%,88%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
+.gate-tile .f{position:absolute;inset:0;border-radius:9px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.9rem}
+.gate-tile .f1{background:linear-gradient(160deg,#FDFAF3,#EFE6D2);color:var(--indigo)}
+.gate-tile .f2{background:linear-gradient(160deg,#1B3160,#0F2044);transform:rotateY(180deg);color:var(--brass);box-shadow:inset 0 0 0 1px rgba(198,161,91,.35)}
+.gate-card h1{font-size:2rem;font-weight:300;margin-bottom:6px}
+.gate-card h1 em{font-style:italic;color:var(--brass)}
+.gate-card .sub{color:#8E97AC;font-size:.86rem;margin-bottom:34px}
+.gate-form{display:grid;gap:12px;text-align:left}
+.gate-form input{
+  background:rgba(251,247,238,.06);border:1px solid var(--line2);border-radius:12px;
+  padding:14px 18px;color:var(--ivory);font-size:.92rem;outline:none;transition:border .3s;
+}
+.gate-form input:focus{border-color:var(--brass)}
+.gate-form input::placeholder{color:#5E6880}
+.gate-msg{font-size:.8rem;min-height:20px;color:#8E97AC}
+.gate-msg.err{color:#D98B70}
+.gate-msg.ok{color:#9BC3A8}
+.gate-alt{margin-top:18px;font-size:.8rem;color:#5E6880}
+.gate-alt button{background:none;border:none;color:var(--brass);font-size:.8rem;text-decoration:underline;text-underline-offset:3px}
+.gate-foot{margin-top:44px;font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:#3E4761}
+
+/* ============ studio shell ============ */
+#studio{display:none;height:100%;flex-direction:column}
+#studio.on{display:flex}
+
+/* topbar */
+#topbar{
+  display:flex;align-items:center;gap:18px;padding:0 22px;height:60px;flex:none;
+  background:rgba(11,24,52,.75);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+  position:relative;z-index:60;
+}
+#topbar .mark{
+  width:26px;height:34px;border-radius:5px;background:var(--indigo);flex:none;
+  display:flex;align-items:center;justify-content:center;color:var(--brass);
+  font-family:var(--serif);font-size:1rem;box-shadow:inset 0 0 0 1px rgba(198,161,91,.3);
+}
+#topbar .word{font-family:var(--serif);font-size:1.05rem;white-space:nowrap}
+#topbar .word em{font-style:italic;color:var(--brass)}
+#design-name{
+  background:transparent;border:1px solid transparent;border-radius:8px;color:var(--ivory);
+  font-family:var(--serif);font-size:1rem;padding:6px 10px;min-width:120px;max-width:260px;
+  transition:border .3s,background .3s;
+}
+#design-name:hover{border-color:var(--line2)}
+#design-name:focus{outline:none;border-color:var(--brass);background:rgba(251,247,238,.05)}
+#topbar .spacer{flex:1}
+#savestate{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:#5E6880;white-space:nowrap}
+#savestate.dirty{color:var(--brass)}
+#whoami{font-size:.76rem;color:#8E97AC;white-space:nowrap}
+
+/* view tabs */
+#tabs{display:flex;gap:4px;background:rgba(251,247,238,.05);border-radius:100px;padding:4px}
+#tabs button{
+  border:none;background:transparent;color:#8E97AC;padding:8px 18px;border-radius:100px;
+  font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:500;transition:all .3s;
+}
+#tabs button.on{background:var(--brass);color:var(--night)}
+#tabs button:not(.on):hover{color:var(--ivory)}
+
+/* main area */
+#main{flex:1;display:flex;min-height:0}
+
+/* sidebar */
+#side{
+  width:252px;flex:none;border-right:1px solid var(--line);display:flex;flex-direction:column;
+  background:rgba(11,24,52,.45);
+}
+#side .sec{padding:18px 18px 10px;display:flex;align-items:center;justify-content:space-between}
+#side .sec .label{color:#5E6880}
+#side .sec button{background:none;border:1px solid var(--line);color:var(--brass);border-radius:8px;width:24px;height:24px;font-size:1rem;line-height:1;transition:all .3s}
+#side .sec button:hover{border-color:var(--brass)}
+#design-list{list-style:none;overflow-y:auto;padding:0 10px;flex:none;max-height:34%}
+#design-list li{
+  padding:10px 12px;border-radius:10px;cursor:pointer;font-size:.86rem;color:#B9C0D2;
+  display:flex;justify-content:space-between;align-items:center;gap:8px;transition:background .25s,color .25s;
+}
+#design-list li:hover{background:rgba(251,247,238,.05)}
+#design-list li.on{background:var(--indigo);color:var(--ivory);box-shadow:inset 0 0 0 1px var(--line)}
+#design-list li small{font-size:.64rem;color:#5E6880;flex:none}
+#version-list{list-style:none;overflow-y:auto;padding:0 10px;flex:1}
+#version-list li{
+  padding:9px 12px;border-radius:10px;cursor:pointer;font-size:.8rem;color:#8E97AC;
+  border-left:2px solid transparent;transition:all .25s;margin-bottom:2px;
+}
+#version-list li:hover{background:rgba(251,247,238,.05);color:var(--ivory)}
+#version-list li.on{border-left-color:var(--brass);color:var(--ivory);background:rgba(251,247,238,.04)}
+#version-list li b{font-weight:500;color:var(--brass);margin-right:8px}
+#version-list li span{display:block;font-size:.68rem;color:#5E6880;margin-top:2px}
+#side .foot{padding:14px 18px;border-top:1px solid var(--line2);display:grid;gap:8px}
+
+/* workspace */
+#work{flex:1;min-width:0;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.view{display:none;flex:1;min-height:0}
+.view.on{display:flex}
+
+/* ---------- Tile Lab ---------- */
+#view-lab{gap:0}
+#facebar{
+  width:118px;flex:none;border-right:1px solid var(--line2);overflow-y:auto;padding:14px 12px;
+  display:flex;flex-direction:column;gap:8px;align-items:center;background:rgba(8,15,34,.5);
+}
+#facebar .fbtn{
+  width:56px;aspect-ratio:11/14.5;border-radius:8px;border:1px solid transparent;background:transparent;
+  padding:2px;transition:all .25s;position:relative;
+}
+#facebar .fbtn svg{width:100%;height:100%;border-radius:6px;background:linear-gradient(155deg,#FDFAF3,#EDE2C9)}
+#facebar .fbtn:hover{transform:translateY(-2px)}
+#facebar .fbtn.on{border-color:var(--brass);box-shadow:0 0 0 3px rgba(198,161,91,.18)}
+#facebar .fgroup{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:#3E4761;margin:8px 0 0;align-self:flex-start}
+#lab-stage{
+  flex:1;display:flex;align-items:center;justify-content:center;position:relative;
+  background:
+    radial-gradient(60% 80% at 50% 30%,rgba(35,56,107,.55) 0%,transparent 70%);
+  perspective:1300px;min-width:0;
+}
+#lab-stage .hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:#3E4761;white-space:nowrap}
+#lab-tile{width:min(270px,40vw);aspect-ratio:11/14.5;position:relative;transform-style:preserve-3d;transition:transform .8s var(--ease)}
+#lab-tile .face{
+  position:absolute;inset:0;border-radius:12%/9%;backface-visibility:hidden;overflow:hidden;
+  box-shadow:0 30px 60px -18px rgba(0,0,0,.65),inset 0 2px 2px rgba(255,255,255,.85),inset 0 -4px 7px rgba(120,100,60,.2),inset 0 0 0 1px rgba(120,100,60,.14);
+}
+#lab-tile .face.back{transform:rotateY(180deg);box-shadow:0 30px 60px -18px rgba(0,0,0,.7),inset 0 2px 2px rgba(255,255,255,.14),inset 0 -4px 8px rgba(0,0,0,.5),inset 0 0 0 1px rgba(198,161,91,.3)}
+#lab-tile .face svg,#lab-tile .face img.art{position:absolute;inset:0;width:100%;height:100%}
+img.art{object-fit:contain;pointer-events:none}
+
+/* controls rail */
+#rail{
+  width:296px;flex:none;border-left:1px solid var(--line2);overflow-y:auto;
+  background:rgba(8,15,34,.55);padding:20px;display:flex;flex-direction:column;gap:22px;
+}
+.ctl-group{display:grid;gap:12px}
+.ctl-group>.label{color:#5E6880;padding-bottom:2px;border-bottom:1px solid var(--line2)}
+.ctl{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ctl label{font-size:.8rem;color:#B9C0D2;flex:1}
+.ctl input[type=color]{
+  width:36px;height:28px;border:1px solid var(--line2);border-radius:7px;background:none;padding:2px;cursor:pointer;
+}
+.ctl input[type=range]{flex:1.4;accent-color:var(--brass);height:3px}
+.ctl output{font-size:.7rem;color:#5E6880;width:36px;text-align:right}
+.ctl select{
+  background:var(--indigo-deep);border:1px solid var(--line2);color:var(--ivory);border-radius:8px;
+  padding:7px 10px;font-size:.8rem;outline:none;flex:1.4;
+}
+.preset-row{display:flex;gap:8px;flex-wrap:wrap}
+.preset{
+  width:34px;height:34px;border-radius:50%;border:2px solid transparent;cursor:pointer;
+  transition:transform .25s,border .25s;padding:0;
+}
+.preset:hover{transform:scale(1.12)}
+.preset.on{border-color:var(--brass)}
+.art-drop{
+  border:1.5px dashed var(--line);border-radius:14px;padding:18px 14px;text-align:center;
+  font-size:.78rem;color:#8E97AC;cursor:pointer;transition:all .3s;
+}
+.art-drop:hover,.art-drop.over{border-color:var(--brass);color:var(--brass);background:rgba(198,161,91,.05)}
+.art-actions{display:flex;gap:8px;flex-wrap:wrap}
+.art-actions .btn{padding:9px 14px;font-size:.66rem}
+.mini-note{font-size:.68rem;color:#5E6880;line-height:1.5}
+
+/* ---------- Full Set view ---------- */
+#view-set{flex-direction:column;overflow:hidden}
+#set-tools{display:flex;align-items:center;gap:14px;padding:14px 26px;border-bottom:1px solid var(--line2);flex:none}
+#set-tools .label{color:#5E6880}
+#set-scroll{flex:1;overflow:auto;padding:30px 34px 60px}
+.suit-row{margin-bottom:34px}
+.suit-row h3{font-size:1.05rem;font-weight:300;color:#B9C0D2;margin-bottom:14px;display:flex;align-items:baseline;gap:12px}
+.suit-row h3 em{font-style:italic;color:var(--brass)}
+.suit-row h3 small{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:#3E4761}
+.suit-tiles{display:flex;gap:12px;flex-wrap:wrap}
+.set-tile{
+  width:var(--setw,76px);aspect-ratio:11/14.5;border-radius:9px;position:relative;overflow:hidden;
+  background:linear-gradient(155deg,#FDFAF3,#EDE2C9);
+  box-shadow:0 8px 18px -6px rgba(0,0,0,.55),inset 0 1px 1px rgba(255,255,255,.85),inset 0 -2px 4px rgba(120,100,60,.18);
+  transition:transform .35s var(--ease);cursor:pointer;
+}
+.set-tile:hover{transform:translateY(-5px) scale(1.04);z-index:2}
+.set-tile svg,.set-tile img.art{position:absolute;inset:0;width:100%;height:100%}
+.set-tile .count{
+  position:absolute;top:4px;right:5px;font-size:.56rem;font-weight:600;color:rgba(32,32,28,.4);
+  background:rgba(255,255,255,.5);border-radius:20px;padding:1px 5px;pointer-events:none;
+}
+.set-tile.backtile{box-shadow:0 8px 18px -6px rgba(0,0,0,.65),inset 0 1px 1px rgba(255,255,255,.15),inset 0 -2px 4px rgba(0,0,0,.5),inset 0 0 0 1px rgba(198,161,91,.3)}
+
+/* ---------- Table scene ---------- */
+#view-table{align-items:center;justify-content:center;position:relative;overflow:hidden}
+#table-scene{perspective:1500px;width:min(880px,90%);position:relative}
+#table-mat{
+  border-radius:20px;aspect-ratio:16/9.4;position:relative;
+  transform:rotateX(38deg);transform-style:preserve-3d;
+  box-shadow:0 60px 120px -30px rgba(0,0,0,.8),inset 0 0 0 1px rgba(198,161,91,.35),inset 0 0 80px rgba(0,0,0,.4);
+  transition:transform 1s var(--ease);
+}
+#view-table.flat #table-mat{transform:rotateX(8deg)}
+#table-mat::before{content:"";position:absolute;inset:26px;border-radius:12px;border:1px solid var(--kl,rgba(198,161,91,.4))}
+#table-mat .center-mark{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-style:italic;font-size:2rem;color:rgba(198,161,91,.4);
+}
+.trow{position:absolute;left:50%;display:flex;gap:5px;transform-style:preserve-3d}
+.trow .t3d{position:relative;transform-style:preserve-3d}
+.t3d .tf,.t3d .tb,.t3d .tt{position:absolute;border-radius:4px}
+#table-hint{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:#3E4761}
+
+/* ---------- asset library modal ---------- */
+.modal{
+  position:fixed;inset:0;z-index:2500;display:none;align-items:center;justify-content:center;
+  background:rgba(8,15,34,.8);backdrop-filter:blur(8px);
+}
+.modal.on{display:flex}
+.modal-card{
+  width:min(720px,94vw);max-height:82vh;display:flex;flex-direction:column;
+  background:var(--indigo-deep);border:1px solid var(--line);border-radius:20px;overflow:hidden;
+}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--line2)}
+.modal-head h3{font-weight:300;font-size:1.2rem}
+.modal-head h3 em{font-style:italic;color:var(--brass)}
+.modal-head button{background:none;border:none;color:#8E97AC;font-size:1.3rem;line-height:1}
+.modal-body{padding:22px 24px;overflow-y:auto}
+#asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px}
+.asset-card{
+  border:1px solid var(--line2);border-radius:12px;overflow:hidden;cursor:pointer;background:rgba(251,247,238,.04);
+  transition:border .3s,transform .3s;
+}
+.asset-card:hover{border-color:var(--brass);transform:translateY(-3px)}
+.asset-card .thumb{aspect-ratio:1;background:#0E1D3E center/contain no-repeat;display:flex;align-items:center;justify-content:center;color:#3E4761;font-size:.7rem}
+.asset-card p{font-size:.66rem;color:#8E97AC;padding:7px 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#team-list{list-style:none;display:grid;gap:8px;margin-bottom:16px}
+#team-list li{display:flex;justify-content:space-between;align-items:center;font-size:.84rem;color:#B9C0D2;background:rgba(251,247,238,.04);border-radius:10px;padding:10px 14px}
+#team-list li small{color:#5E6880}
+.team-add{display:flex;gap:10px}
+.team-add input{flex:1;background:rgba(251,247,238,.06);border:1px solid var(--line2);border-radius:10px;padding:11px 14px;color:var(--ivory);font-size:.86rem;outline:none}
+.team-add input:focus{border-color:var(--brass)}
+
+/* toast */
+#toast{
+  position:fixed;bottom:26px;left:50%;transform:translate(-50%,20px);z-index:3500;
+  background:var(--indigo);border:1px solid var(--line);color:var(--ivory);
+  padding:13px 26px;border-radius:100px;font-size:.82rem;opacity:0;pointer-events:none;
+  transition:opacity .4s,transform .4s;box-shadow:0 14px 40px rgba(0,0,0,.5);
+}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#toast b{color:var(--brass);font-weight:500}
+
+@media(max-width:1080px){
+  #side{display:none}
+  #rail{width:250px}
+  #facebar{width:96px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ auth gate ============ -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-tile"><div class="in">
+      <div class="f f1">G</div><div class="f f2">聚</div>
+    </div></div>
+    <h1>Gathered <em>Studio</em></h1>
+    <p class="sub">The founders' atelier. Sign in to design the set.</p>
+    <form class="gate-form" id="gate-form">
+      <input type="email" id="auth-email" placeholder="Email" required autocomplete="email">
+      <input type="password" id="auth-pass" placeholder="Password" required autocomplete="current-password" minlength="8">
+      <button class="btn btn-gold" id="auth-btn" type="submit">Enter the studio</button>
+      <p class="gate-msg" id="gate-msg"></p>
+    </form>
+    <p class="gate-alt" id="gate-alt">First time here? <button type="button" id="auth-toggle">Create your password</button></p>
+    <p class="gate-foot">Gathered Mahjong · By invitation</p>
+  </div>
+</div>
+
+<!-- ============ studio shell ============ -->
+<div id="studio">
+  <div id="topbar">
+    <span class="mark">G</span>
+    <span class="word">Gathered <em>Studio</em></span>
+    <input id="design-name" value="Untitled design" aria-label="Design name">
+    <span id="savestate">saved</span>
+    <div class="spacer"></div>
+    <div id="tabs">
+      <button data-view="lab" class="on">Tile Lab</button>
+      <button data-view="set">Full Set</button>
+      <button data-view="table">The Table</button>
+    </div>
+    <div class="spacer"></div>
+    <span id="whoami"></span>
+    <button class="btn btn-ghost" id="signout" title="Sign out">Exit</button>
+  </div>
+
+  <div id="main">
+    <!-- sidebar -->
+    <aside id="side">
+      <div class="sec"><span class="label">Designs</span><button id="new-design" title="New design">+</button></div>
+      <ul id="design-list" class="scroll"></ul>
+      <div class="sec"><span class="label">Versions</span><button id="save-version" title="Save a version">↓</button></div>
+      <ul id="version-list" class="scroll"></ul>
+      <div class="foot">
+        <button class="btn btn-line" id="open-team">Team &amp; invites</button>
+        <button class="btn btn-line" id="open-waitlist">Waitlist signups</button>
+        <button class="btn btn-ghost" id="export-spec">Export spec JSON</button>
+        <a class="btn btn-ghost" href="brand.html" style="text-decoration:none">Brand book ↗</a>
+      </div>
+    </aside>
+
+    <!-- workspace -->
+    <div id="work">
+
+      <!-- ===== Tile Lab ===== -->
+      <div class="view on" id="view-lab">
+        <div id="facebar" class="scroll"></div>
+        <div id="lab-stage">
+          <div id="lab-tile">
+            <div class="face front" id="lab-front"></div>
+            <div class="face back" id="lab-back"></div>
+          </div>
+          <p class="hint">Move to tilt · Click to flip</p>
+        </div>
+        <div id="rail" class="scroll">
+          <div class="ctl-group">
+            <span class="label">Colorways</span>
+            <div class="preset-row" id="presets"></div>
+          </div>
+          <div class="ctl-group">
+            <span class="label">Palette</span>
+            <div class="ctl"><label>Tile face</label><input type="color" data-pal="face" value="#F7F0DF"></div>
+            <div class="ctl"><label>Backing</label><input type="color" data-pal="back" value="#14264E"></div>
+            <div class="ctl"><label>Primary ink</label><input type="color" data-pal="ink" value="#14264E"></div>
+            <div class="ctl"><label>Botanical ink</label><input type="color" data-pal="green" value="#41604E"></div>
+            <div class="ctl"><label>Seal ink</label><input type="color" data-pal="red" value="#A9502F"></div>
+            <div class="ctl"><label>Metal accent</label><input type="color" data-pal="accent" value="#C6A15B"></div>
+          </div>
+          <div class="ctl-group">
+            <span class="label">Geometry</span>
+            <div class="ctl"><label>Corner radius</label><input type="range" data-geo="radius" min="4" max="20" value="12"><output>12</output></div>
+            <div class="ctl"><label>Engraving depth</label><input type="range" data-geo="depth" min="0" max="100" value="45"><output>45</output></div>
+          </div>
+          <div class="ctl-group">
+            <span class="label">The Mat</span>
+            <div class="ctl"><label>Mat surface</label><input type="color" data-mat="color" value="#14264E"></div>
+            <div class="ctl"><label>Keyline</label><input type="color" data-mat="keyline" value="#C6A15B"></div>
+            <div class="ctl"><label>Monogram</label>
+              <input type="text" id="mat-mono" value="Gathered" maxlength="24"
+                style="flex:1.4;background:var(--indigo-deep);border:1px solid var(--line2);color:var(--ivory);border-radius:8px;padding:7px 10px;font-size:.8rem;outline:none">
+            </div>
+            <div class="ctl"><label>Show monogram</label><select id="mat-show"><option value="yes">Yes</option><option value="no">No</option></select></div>
+            <p class="mini-note">Seen in The Table view. One mat, one collection, made to live together.</p>
+          </div>
+          <div class="ctl-group" id="art-group">
+            <span class="label">Artwork · <span id="art-face-label">this face</span></span>
+            <div class="art-drop" id="art-drop">Drop Nha's artwork here<br>or click to upload<br><span style="font-size:.64rem;color:#5E6880">PNG · JPG · SVG, transparent PNG works best</span></div>
+            <input type="file" id="art-file" accept="image/*" hidden>
+            <div class="art-actions">
+              <button class="btn btn-line" id="art-library">Library</button>
+              <button class="btn btn-line" id="art-apply-suit">Apply to suit</button>
+              <button class="btn btn-ghost" id="art-clear">Clear</button>
+            </div>
+            <div class="ctl"><label>Scale</label><input type="range" data-art="scale" min="20" max="200" value="100"><output>100</output></div>
+            <div class="ctl"><label>Position X</label><input type="range" data-art="x" min="-50" max="50" value="0"><output>0</output></div>
+            <div class="ctl"><label>Position Y</label><input type="range" data-art="y" min="-50" max="50" value="0"><output>0</output></div>
+            <div class="ctl"><label>Rotate</label><input type="range" data-art="rot" min="-45" max="45" value="0"><output>0</output></div>
+            <div class="ctl"><label>Opacity</label><input type="range" data-art="opacity" min="10" max="100" value="100"><output>100</output></div>
+            <div class="ctl"><label>Hide engraving</label><select data-art="solo"><option value="no">No, layer over it</option><option value="yes">Yes, artwork only</option></select></div>
+            <p class="mini-note">Artwork uploads are stored privately in the Gathered vault and versioned with the design. Assign a piece per face, or press Apply to suit to dress all nine.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Full Set ===== -->
+      <div class="view" id="view-set">
+        <div id="set-tools">
+          <span class="label">Collection No. 001 · full pressing</span>
+          <div class="spacer" style="flex:1"></div>
+          <div class="ctl" style="gap:8px"><label style="font-size:.74rem;color:#8E97AC">Tile size</label>
+            <input type="range" id="set-size" min="52" max="120" value="76" style="accent-color:var(--brass)">
+          </div>
+          <button class="btn btn-line" id="set-mode">Show every tile</button>
+          <button class="btn btn-gold" id="set-export">Export PNG sheet</button>
+        </div>
+        <div id="set-scroll" class="scroll"><div id="set-body"></div></div>
+      </div>
+
+      <!-- ===== Table scene ===== -->
+      <div class="view" id="view-table">
+        <div id="table-scene">
+          <div id="table-mat">
+            <span class="center-mark">Gathered</span>
+          </div>
+        </div>
+        <p id="table-hint">Click the table to change the angle</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============ asset library modal ============ -->
+<div class="modal" id="modal-assets">
+  <div class="modal-card">
+    <div class="modal-head"><h3>The <em>vault</em></h3><button data-close>&times;</button></div>
+    <div class="modal-body scroll"><div id="asset-grid"></div></div>
+  </div>
+</div>
+
+<!-- ============ team modal ============ -->
+<div class="modal" id="modal-team">
+  <div class="modal-card">
+    <div class="modal-head"><h3>Team &amp; <em>invites</em></h3><button data-close>&times;</button></div>
+    <div class="modal-body scroll">
+      <ul id="team-list"></ul>
+      <div class="team-add">
+        <input type="email" id="team-email" placeholder="jill@example.com">
+        <button class="btn btn-gold" id="team-add-btn">Invite</button>
+      </div>
+      <p class="mini-note" style="margin-top:12px">Anyone listed here can sign in to the studio with their email. Add Jill and Nha when ready; remove anyone by asking Conner nicely.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ waitlist modal ============ -->
+<div class="modal" id="modal-waitlist">
+  <div class="modal-card">
+    <div class="modal-head"><h3>VIP <em>waitlist</em></h3><button data-close>&times;</button></div>
+    <div class="modal-body scroll">
+      <p class="mini-note" id="wl-count" style="margin-bottom:14px"></p>
+      <ul id="wl-list" style="list-style:none;display:grid;gap:6px;font-size:.84rem;color:#B9C0D2"></ul>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script>
+/* =========================================================
+   GATHERED STUDIO :: founders' atelier
+   Auth + storage + versioning on Supabase (project DreamFrame)
+   ========================================================= */
+const SB_URL = "https://oskadlvzfwrhhtglrtvu.supabase.co";
+const SB_KEY = "sb_publishable_E6JjN7M6Qwp5N3u9D3YblA_4avSt7uh";
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const toast = (msg) => {
+  const t = $("#toast"); t.innerHTML = msg; t.classList.add("on");
+  clearTimeout(toast._h); toast._h = setTimeout(() => t.classList.remove("on"), 2600);
+};
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ---------------- design spec model ---------------- */
+const DEFAULT_SPEC = () => ({
+  pal: { face:"#F7F0DF", back:"#14264E", ink:"#14264E", green:"#41604E", red:"#A9502F", accent:"#C6A15B" },
+  geo: { radius:12, depth:45 },
+  mat: { color:"#14264E", keyline:"#C6A15B", mono:"Gathered", showMono:"yes" },
+  faces: {}   /* per-face artwork: {assetId, path, scale, x, y, rot, opacity, solo} */
+});
+
+/* face catalogue */
+const CN = ["","一","二","三","四","五","六","七","八","九"];
+const FACES = [];
+for (let i=1;i<=9;i++) FACES.push({ key:"c"+i, group:"Craks",  label:i+" Crak" });
+for (let i=1;i<=9;i++) FACES.push({ key:"b"+i, group:"Bams",   label:i+" Bam"  });
+for (let i=1;i<=9;i++) FACES.push({ key:"d"+i, group:"Dots",   label:i+" Dot"  });
+[["wE","East","東"],["wS","South","南"],["wW","West","西"],["wN","North","北"]]
+  .forEach(([k,l]) => FACES.push({ key:k, group:"Winds", label:l+" Wind" }));
+[["drR","Red Dragon"],["drG","Green Dragon"],["drW","White Dragon"]]
+  .forEach(([k,l]) => FACES.push({ key:k, group:"Dragons", label:l }));
+FACES.push({ key:"fl", group:"Flowers & Jokers", label:"Flower" });
+FACES.push({ key:"jk", group:"Flowers & Jokers", label:"Joker" });
+const FACE_COUNT = k => k.startsWith("fl") || k.startsWith("jk") ? 8 : 4;
+const faceByKey = k => FACES.find(f => f.key === k);
+
+/* ---------------- color helpers ---------------- */
+function shade(hex, amt){ /* amt -1..1 */
+  const n = parseInt(hex.slice(1),16);
+  let r=(n>>16)&255, g=(n>>8)&255, b=n&255;
+  const t = amt<0?0:255, a=Math.abs(amt);
+  r=Math.round(r+(t-r)*a); g=Math.round(g+(t-g)*a); b=Math.round(b+(t-b)*a);
+  return "#"+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+const faceBG = p => `linear-gradient(155deg, ${shade(p.face,.5)} 0%, ${p.face} 55%, ${shade(p.face,-.12)} 100%)`;
+const backBG = p => `radial-gradient(120% 90% at 30% 15%, ${shade(p.back,.22)} 0%, ${p.back} 55%, ${shade(p.back,-.45)} 100%)`;
+
+/* ---------------- procedural face engine ---------------- */
+const FROND = `M8 130 C 30 90, 44 55, 50 12 M46 26 C 34 30, 24 40, 18 52 M48 22 C 58 28, 66 38, 70 50 M42 44 C 31 49, 23 58, 18 69 M44 40 C 54 46, 61 55, 65 66 M36 64 C 27 70, 21 78, 17 88 M38 60 C 47 66, 53 74, 56 84 M28 88 C 21 94, 16 101, 13 110 M30 84 C 38 90, 43 97, 45 106`;
+const BIRD = `M55 62 C 40 62, 32 50, 34 38 C 36 28, 46 22, 56 24 C 62 25, 67 29, 69 35 L 82 32 L 72 42 C 74 54, 66 62, 55 62 Z`;
+const POS = {
+  1:[[55,80]], 2:[[55,52],[55,108]], 3:[[33,50],[55,80],[77,110]],
+  4:[[37,52],[73,52],[37,108],[73,108]], 5:[[37,52],[73,52],[55,80],[37,108],[73,108]],
+  6:[[37,50],[73,50],[37,80],[73,80],[37,110],[73,110]],
+  7:[[30,46],[55,52],[80,58],[37,84],[73,84],[37,112],[73,112]],
+  8:[[37,44],[73,44],[37,66],[73,66],[37,88],[73,88],[37,110],[73,110]],
+  9:[[33,50],[55,50],[77,50],[33,80],[55,80],[77,80],[33,110],[55,110],[77,110]]
+};
+const posScale = n => n<=4 ? 1 : n<=6 ? .85 : .72;
+
+function rosette(x,y,color,s){
+  return `<g transform="translate(${x},${y}) scale(${s})">
+    <circle r="11.5" fill="none" stroke="${color}" stroke-width="2"/>
+    <path d="M0 -6.5 C 2.8 -3.5, 2.8 3.5, 0 6.5 C -2.8 3.5, -2.8 -3.5, 0 -6.5 Z" fill="${color}"/>
+    <path d="M-6.5 0 C -3.5 -2.8, 3.5 -2.8, 6.5 0 C 3.5 2.8, -3.5 2.8, -6.5 0 Z" fill="${color}" opacity=".55"/>
+  </g>`;
+}
+function cane(x,y,color,s){
+  return `<g transform="translate(${x},${y}) scale(${s})" stroke="${color}" fill="none">
+    <rect x="-3.4" y="-22" width="6.8" height="44" rx="3.4" stroke-width="2"/>
+    <line x1="-3.4" y1="-8" x2="3.4" y2="-8" stroke-width="1.6"/>
+    <line x1="-3.4" y1="8" x2="3.4" y2="8" stroke-width="1.6"/>
+    <path d="M0 -22 C -5 -27, -10 -29, -15 -29 M0 -22 C 5 -27, 10 -29, 15 -29" stroke-width="1.6" stroke-linecap="round"/>
+  </g>`;
+}
+const numTag = (n,color) => `<text x="12" y="26" font-family="Fraunces,Georgia,serif" font-size="17" fill="${color}">${n}</text>`;
+const gTag = accent => `<text x="86" y="134" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="13" fill="${accent}">g</text>`;
+const cjkText = (x,y,size,color,ch) => `<text x="${x}" y="${y}" text-anchor="middle" font-family="'Noto Serif TC','Songti TC','SimSun',serif" font-size="${size}" fill="${color}">${ch}</text>`;
+
+function faceSVG(key, P){
+  const dots = n => POS[n].map(([x,y]) => rosette(x,y,[P.ink,P.red,P.green][(x+y)%3===0?2:(x>55?1:0)] , posScale(n))).join("");
+  let body = "";
+  if (key[0]==="c" && key.length<=2){         /* craks */
+    const n = +key.slice(1);
+    body = numTag(n,P.red) + cjkText(55,66,40,P.ink,CN[n]) + cjkText(55,116,34,P.red,"萬");
+  } else if (key[0]==="b"){                    /* bams */
+    const n = +key.slice(1);
+    if (n===1){
+      body = numTag(1,P.red)
+        + `<g stroke="${P.green}"><path d="M55 122 C 55 96, 55 80, 55 62" fill="none" stroke-width="2.4" stroke-linecap="round"/>
+           <path d="M55 96 C 44 92, 36 84, 33 74 M55 84 C 66 80, 73 73, 76 64" fill="none" stroke-width="1.8" stroke-linecap="round"/></g>`
+        + `<g fill="${P.ink}"><path d="${BIRD}"/><path d="M50 40 C 42 36, 38 30, 40 24 C 46 26, 50 32, 50 40 Z" opacity=".75"/></g>`
+        + `<circle cx="60" cy="34" r="2" fill="${P.face}"/>`
+        + `<path d="M69 35 L 79 34" stroke="${P.accent}" stroke-width="2" stroke-linecap="round"/>` + gTag(P.accent);
+    } else {
+      body = numTag(n,P.green) + POS[n].map(([x,y]) => cane(x,y,P.green,posScale(n))).join("") + gTag(P.accent);
+    }
+  } else if (key[0]==="d" && key!=="drR" && key!=="drG" && key!=="drW"){ /* dots */
+    const n = +key.slice(1);
+    body = numTag(n,P.ink) + dots(n) + gTag(P.accent);
+  } else if (key[0]==="w"){                    /* winds */
+    const ch = {wE:"東",wS:"南",wW:"西",wN:"北"}[key];
+    const en = {wE:"E",wS:"S",wW:"W",wN:"N"}[key];
+    body = `<text x="14" y="28" font-family="Fraunces,Georgia,serif" font-size="15" letter-spacing="1" fill="${P.ink}">${en}</text>`
+      + cjkText(55,92,52,P.ink,ch) + `<path d="M30 116 H 80" stroke="${P.accent}" stroke-width="1.4"/>`;
+  } else if (key==="drR"){
+    body = cjkText(55,90,54,P.red,"中") + `<path d="M30 112 H 80" stroke="${P.red}" stroke-width="1.4" opacity=".6"/>`;
+  } else if (key==="drG"){
+    body = cjkText(55,90,54,P.green,"發") + `<path d="M30 112 H 80" stroke="${P.green}" stroke-width="1.4" opacity=".6"/>`;
+  } else if (key==="drW"){
+    body = `<rect x="26" y="30" width="58" height="84" rx="6" fill="none" stroke="${P.ink}" stroke-width="2.4"/>
+      <rect x="36" y="42" width="38" height="60" rx="3" fill="none" stroke="${P.accent}" stroke-width="1.4"/>`;
+  } else if (key==="fl"){
+    body = `<g stroke="${P.green}" fill="none" stroke-linecap="round" transform="translate(24,6)"><path stroke-width="2" d="${FROND}"/></g>
+      <g stroke="${P.accent}" fill="none" stroke-linecap="round" transform="translate(48,18) scale(.72)" opacity=".85"><path stroke-width="2" d="${FROND}"/></g>
+      <text x="16" y="134" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="12" fill="${P.accent}">palm no.1</text>`;
+  } else if (key==="jk"){
+    body = `<circle cx="55" cy="66" r="30" fill="none" stroke="${P.accent}" stroke-width="1.6"/>
+      <text x="55" y="80" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="40" fill="${P.ink}">G</text>
+      <g stroke="${P.green}" fill="none" stroke-linecap="round" transform="translate(30,96) scale(.34)"><path stroke-width="2.6" d="${FROND}"/></g>
+      <g stroke="${P.green}" fill="none" stroke-linecap="round" transform="translate(80,96) scale(-.34,.34)"><path stroke-width="2.6" d="${FROND}"/></g>
+      <text x="55" y="132" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-size="10" letter-spacing="3" fill="${P.accent}">JOKER</text>`;
+  }
+  const inkOp = .62 + .38*(state.spec.geo.depth/100);
+  return `<svg viewBox="0 0 110 145" xmlns="http://www.w3.org/2000/svg"><g opacity="${inkOp}">${body}</g></svg>`;
+}
+function backSVG(P){
+  return `<svg viewBox="0 0 110 145" xmlns="http://www.w3.org/2000/svg">
+    <rect x="8" y="8" width="94" height="129" rx="10" fill="none" stroke="${P.accent}" stroke-width="1.2" opacity=".55"/>
+    <g stroke="${P.accent}" fill="none" stroke-linecap="round" opacity=".38" transform="translate(28,10) scale(.8)"><path stroke-width="2" d="${FROND}"/></g>
+    <text x="55" y="88" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="34" fill="${P.accent}">G</text>
+  </svg>`;
+}
+function artHTML(key){
+  const a = state.spec.faces[key];
+  if (!a || !a.path) return "";
+  const url = state.assetUrls[a.path];
+  if (!url) return "";
+  const t = `translate(${a.x||0}%, ${a.y||0}%) rotate(${a.rot||0}deg) scale(${(a.scale||100)/100})`;
+  return `<img class="art" src="${esc(url)}" style="transform:${t};opacity:${(a.opacity??100)/100}" alt="">`;
+}
+/* full face = svg engraving + optional artwork overlay */
+function faceHTML(key){
+  const a = state.spec.faces[key];
+  const solo = a && a.solo === "yes";
+  return (solo ? "" : faceSVG(key, state.spec.pal)) + artHTML(key);
+}
+
+/* ---------------- app state ---------------- */
+const state = {
+  user: null,
+  designs: [],
+  design: null,        /* current gm_designs row */
+  versions: [],
+  loadedVersion: null,
+  spec: DEFAULT_SPEC(),
+  face: "b1",          /* selected face in lab */
+  assets: [],
+  assetUrls: {},       /* storage_path -> signed url */
+  dirty: false,
+  setMode: "unique"
+};
+function markDirty(){
+  state.dirty = true;
+  $("#savestate").textContent = "unsaved changes";
+  $("#savestate").classList.add("dirty");
+  if (state.design) localStorage.setItem("gm_draft_"+state.design.id, JSON.stringify({ spec: state.spec, at: Date.now() }));
+}
+function markSaved(){
+  state.dirty = false;
+  $("#savestate").textContent = "saved";
+  $("#savestate").classList.remove("dirty");
+  if (state.design) localStorage.removeItem("gm_draft_"+state.design.id);
+}
+</script>
+<script>
+/* =========================================================
+   auth gate
+   ========================================================= */
+let authMode = "signin";
+$("#auth-toggle").addEventListener("click", () => {
+  authMode = authMode === "signin" ? "signup" : "signin";
+  $("#auth-btn").textContent = authMode === "signin" ? "Enter the studio" : "Create account";
+  $("#gate-alt").firstChild.textContent = authMode === "signin" ? "First time here? " : "Already set up? ";
+  $("#auth-toggle").textContent = authMode === "signin" ? "Create your password" : "Sign in instead";
+  $("#auth-pass").autocomplete = authMode === "signin" ? "current-password" : "new-password";
+});
+$("#gate-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const email = $("#auth-email").value.trim(), password = $("#auth-pass").value;
+  const msg = $("#gate-msg"); msg.className = "gate-msg"; msg.textContent = "One moment…";
+  $("#auth-btn").disabled = true;
+  try {
+    if (authMode === "signup"){
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) throw error;
+      if (data.session) await enterStudio(data.session.user);
+      else { msg.className = "gate-msg ok"; msg.textContent = "Check your inbox to confirm your email, then sign in."; }
+    } else {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      await enterStudio(data.user);
+    }
+  } catch (err){
+    msg.className = "gate-msg err";
+    msg.textContent = err.message || "That did not work. Try again.";
+  } finally { $("#auth-btn").disabled = false; }
+});
+$("#signout").addEventListener("click", async () => { await sb.auth.signOut(); location.reload(); });
+
+async function enterStudio(user){
+  const { data: isMember, error } = await sb.rpc("gm_is_member");
+  if (error || !isMember){
+    await sb.auth.signOut();
+    const msg = $("#gate-msg"); msg.className = "gate-msg err";
+    msg.textContent = "This email is not on the founders list. Ask Conner or Kelly for an invite.";
+    return;
+  }
+  state.user = user;
+  $("#whoami").textContent = user.email;
+  $("#gate").classList.add("hidden");
+  $("#studio").classList.add("on");
+  await loadDesigns();
+  buildFacebar(); buildPresets(); renderLab();
+}
+sb.auth.getSession().then(({ data:{ session } }) => { if (session) enterStudio(session.user); });
+
+/* =========================================================
+   designs + versions
+   ========================================================= */
+async function loadDesigns(){
+  const { data, error } = await sb.from("gm_designs").select("*").eq("archived", false).order("updated_at", { ascending:false });
+  if (error) return toast("Could not load designs: " + esc(error.message));
+  state.designs = data;
+  if (!data.length){
+    const { data: d, error: e2 } = await sb.from("gm_designs")
+      .insert({ name:"Modern Palms", description:"Collection No. 001", created_by: state.user.email })
+      .select().single();
+    if (e2) return toast(esc(e2.message));
+    await sb.from("gm_design_versions").insert({
+      design_id: d.id, version_no: 1, note: "First study", spec: DEFAULT_SPEC(), created_by: state.user.email
+    });
+    state.designs = [d];
+  }
+  renderDesignList();
+  await selectDesign(state.designs[0].id);
+}
+function renderDesignList(){
+  $("#design-list").innerHTML = state.designs.map(d =>
+    `<li data-id="${d.id}" class="${state.design && d.id===state.design.id ? "on":""}">
+       <span>${esc(d.name)}</span><small>${new Date(d.updated_at).toLocaleDateString()}</small></li>`).join("");
+}
+async function selectDesign(id){
+  state.design = state.designs.find(d => d.id === id);
+  $("#design-name").value = state.design.name;
+  const { data: vs, error } = await sb.from("gm_design_versions")
+    .select("id,version_no,note,created_by,created_at").eq("design_id", id)
+    .order("version_no", { ascending:false });
+  if (error) return toast(esc(error.message));
+  state.versions = vs;
+  const draft = localStorage.getItem("gm_draft_"+id);
+  if (draft){
+    try { state.spec = normalizeSpec(JSON.parse(draft).spec); markDirty(); toast("Recovered an <b>unsaved draft</b>"); }
+    catch { localStorage.removeItem("gm_draft_"+id); }
+    state.loadedVersion = vs[0]?.id ?? null;
+  } else if (vs.length){
+    await loadVersion(vs[0].id, { silent:true });
+  } else {
+    state.spec = DEFAULT_SPEC(); markSaved();
+  }
+  renderDesignList(); renderVersionList(); syncControls(); rerenderView();
+  await refreshAssets();
+}
+function renderVersionList(){
+  $("#version-list").innerHTML = state.versions.map(v =>
+    `<li data-id="${v.id}" class="${v.id===state.loadedVersion ? "on":""}">
+       <b>v${v.version_no}</b>${esc(v.note || "untitled")}
+       <span>${esc((v.created_by||"").split("@")[0])} · ${new Date(v.created_at).toLocaleDateString()}</span></li>`).join("");
+}
+async function loadVersion(vid, opts={}){
+  const { data, error } = await sb.from("gm_design_versions").select("spec,version_no").eq("id", vid).single();
+  if (error) return toast(esc(error.message));
+  state.spec = normalizeSpec(data.spec);
+  state.loadedVersion = vid;
+  markSaved(); renderVersionList(); syncControls(); rerenderView();
+  await hydrateArtUrls();
+  if (!opts.silent) toast(`Loaded <b>v${data.version_no}</b>`);
+}
+function normalizeSpec(s){
+  const d = DEFAULT_SPEC();
+  return { pal:{...d.pal, ...(s?.pal||{})}, geo:{...d.geo, ...(s?.geo||{})}, mat:{...d.mat, ...(s?.mat||{})}, faces:{...(s?.faces||{})} };
+}
+async function saveVersion(){
+  if (!state.design) return;
+  const note = prompt("Note for this version (what changed?)", "") ?? "";
+  const next = (state.versions[0]?.version_no || 0) + 1;
+  const { data, error } = await sb.from("gm_design_versions").insert({
+    design_id: state.design.id, version_no: next, note,
+    spec: state.spec, created_by: state.user.email
+  }).select("id,version_no,note,created_by,created_at").single();
+  if (error) return toast("Save failed: " + esc(error.message));
+  await sb.from("gm_designs").update({ name: $("#design-name").value.trim() || "Untitled", updated_at: new Date().toISOString() }).eq("id", state.design.id);
+  state.design.name = $("#design-name").value.trim() || "Untitled";
+  state.versions.unshift(data); state.loadedVersion = data.id;
+  markSaved(); renderVersionList(); renderDesignList();
+  toast(`Saved <b>v${next}</b> of ${esc(state.design.name)}`);
+}
+$("#save-version").addEventListener("click", saveVersion);
+$("#design-list").addEventListener("click", e => {
+  const li = e.target.closest("li"); if (li) selectDesign(li.dataset.id);
+});
+$("#version-list").addEventListener("click", e => {
+  const li = e.target.closest("li"); if (!li) return;
+  if (state.dirty && !confirm("You have unsaved changes. Load this version anyway?")) return;
+  loadVersion(li.dataset.id);
+});
+$("#new-design").addEventListener("click", async () => {
+  const name = prompt("Name the new design", "Untitled study");
+  if (!name) return;
+  const { data, error } = await sb.from("gm_designs").insert({ name, created_by: state.user.email }).select().single();
+  if (error) return toast(esc(error.message));
+  await sb.from("gm_design_versions").insert({ design_id: data.id, version_no:1, note:"Blank canvas", spec: DEFAULT_SPEC(), created_by: state.user.email });
+  state.designs.unshift(data);
+  await selectDesign(data.id);
+  toast(`Started <b>${esc(name)}</b>`);
+});
+$("#design-name").addEventListener("input", markDirty);
+$("#export-spec").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify({ design: state.design?.name, exported: new Date().toISOString(), spec: state.spec }, null, 2)], { type:"application/json" });
+  const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: (state.design?.name||"design").replace(/\s+/g,"-").toLowerCase()+"-spec.json" });
+  a.click(); URL.revokeObjectURL(a.href);
+});
+
+/* =========================================================
+   artwork vault (storage + gm_assets)
+   ========================================================= */
+async function refreshAssets(){
+  const { data, error } = await sb.from("gm_assets").select("*").order("created_at", { ascending:false });
+  if (!error){ state.assets = data; await hydrateArtUrls(); }
+}
+async function signPath(path){
+  if (state.assetUrls[path]) return state.assetUrls[path];
+  const { data, error } = await sb.storage.from("gathered").createSignedUrl(path, 60*60*24*6);
+  if (!error){ state.assetUrls[path] = data.signedUrl; return data.signedUrl; }
+  return null;
+}
+async function hydrateArtUrls(){
+  const paths = new Set(state.assets.map(a => a.storage_path));
+  Object.values(state.spec.faces).forEach(f => f?.path && paths.add(f.path));
+  await Promise.all([...paths].map(signPath));
+  rerenderView();
+}
+async function uploadArt(file){
+  if (!file || !file.type.startsWith("image/")) return toast("That does not look like an image");
+  toast("Uploading <b>" + esc(file.name) + "</b>…");
+  const path = `artwork/${crypto.randomUUID()}-${file.name.replace(/[^\w.\-]+/g,"_")}`;
+  const { error } = await sb.storage.from("gathered").upload(path, file, { contentType: file.type });
+  if (error) return toast("Upload failed: " + esc(error.message));
+  const { data: asset, error: e2 } = await sb.from("gm_assets").insert({
+    filename: file.name, storage_path: path, content_type: file.type, uploaded_by: state.user.email
+  }).select().single();
+  if (e2) return toast(esc(e2.message));
+  state.assets.unshift(asset);
+  await signPath(path);
+  assignArt(state.face, asset);
+  toast("<b>" + esc(file.name) + "</b> is in the vault and on the tile");
+}
+function assignArt(faceKey, asset){
+  const prev = state.spec.faces[faceKey] || {};
+  state.spec.faces[faceKey] = { ...{ scale:100, x:0, y:0, rot:0, opacity:100, solo:"no" }, ...prev, assetId: asset.id, path: asset.storage_path };
+  markDirty(); syncControls(); rerenderView();
+}
+
+/* upload wiring */
+const drop = $("#art-drop");
+drop.addEventListener("click", () => $("#art-file").click());
+$("#art-file").addEventListener("change", e => { uploadArt(e.target.files[0]); e.target.value = ""; });
+["dragover","dragenter"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave","drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", e => uploadArt(e.dataTransfer.files[0]));
+
+$("#art-clear").addEventListener("click", () => {
+  delete state.spec.faces[state.face];
+  markDirty(); syncControls(); rerenderView();
+});
+$("#art-apply-suit").addEventListener("click", () => {
+  const cur = state.spec.faces[state.face];
+  if (!cur?.path) return toast("Put artwork on this face first");
+  const suit = state.face[0];
+  if (!"cbd".includes(suit) || state.face.startsWith("dr")) return toast("Apply to suit works on craks, bams, and dots");
+  for (let i=1;i<=9;i++) state.spec.faces[suit+i] = { ...cur };
+  markDirty(); rerenderView();
+  toast("Dressed the whole suit");
+});
+$("#art-library").addEventListener("click", async () => {
+  await refreshAssets();
+  const grid = $("#asset-grid");
+  grid.innerHTML = state.assets.length ? "" : `<p class="mini-note">Nothing in the vault yet. Upload artwork from the Tile Lab.</p>`;
+  for (const a of state.assets){
+    const url = await signPath(a.storage_path);
+    const card = document.createElement("div");
+    card.className = "asset-card";
+    card.innerHTML = `<div class="thumb" style="background-image:url('${esc(url)}')"></div><p>${esc(a.filename)}</p>`;
+    card.addEventListener("click", () => { assignArt(state.face, a); $("#modal-assets").classList.remove("on"); });
+    grid.appendChild(card);
+  }
+  $("#modal-assets").classList.add("on");
+});
+
+/* =========================================================
+   controls
+   ========================================================= */
+const PRESETS = [
+  { name:"Gallery Blue", pal:{ face:"#F7F0DF", back:"#14264E", ink:"#14264E", green:"#41604E", red:"#A9502F", accent:"#C6A15B" } },
+  { name:"Midnight Ink", pal:{ face:"#F2EDE4", back:"#101014", ink:"#1A1A1E", green:"#3A4A44", red:"#8E3B2C", accent:"#B7A27A" } },
+  { name:"Celadon",      pal:{ face:"#F4F2E7", back:"#3E5E52", ink:"#2E4A40", green:"#41604E", red:"#A9502F", accent:"#9AA98B" } },
+  { name:"Clay & Cream", pal:{ face:"#FAF3E6", back:"#7E3B22", ink:"#5B2E1C", green:"#6A6046", red:"#A9502F", accent:"#C08A4E" } },
+  { name:"Plum Dusk",    pal:{ face:"#F5EFE8", back:"#3A2B4A", ink:"#32263E", green:"#4E5E50", red:"#93414F", accent:"#C2A06A" } }
+];
+function buildPresets(){
+  $("#presets").innerHTML = "";
+  PRESETS.forEach((p,i) => {
+    const b = document.createElement("button");
+    b.className = "preset"; b.title = p.name;
+    b.style.background = `linear-gradient(135deg, ${p.pal.face} 0 45%, ${p.pal.back} 45% 100%)`;
+    b.addEventListener("click", () => {
+      state.spec.pal = { ...p.pal };
+      state.spec.mat = { ...state.spec.mat, color: p.pal.back, keyline: p.pal.accent };
+      $$("#presets .preset").forEach(x => x.classList.remove("on")); b.classList.add("on");
+      markDirty(); syncControls(); rerenderView();
+    });
+    $("#presets").appendChild(b);
+  });
+}
+function syncControls(){
+  $$("input[data-pal]").forEach(i => i.value = state.spec.pal[i.dataset.pal]);
+  $$("input[data-geo]").forEach(i => { i.value = state.spec.geo[i.dataset.geo]; i.nextElementSibling.textContent = i.value; });
+  $$("input[data-mat]").forEach(i => i.value = state.spec.mat[i.dataset.mat]);
+  $("#mat-mono").value = state.spec.mat.mono;
+  $("#mat-show").value = state.spec.mat.showMono;
+  const a = state.spec.faces[state.face] || { scale:100, x:0, y:0, rot:0, opacity:100, solo:"no" };
+  $$("input[data-art]").forEach(i => { i.value = a[i.dataset.art] ?? i.value; i.nextElementSibling.textContent = i.value; });
+  const sel = document.querySelector("select[data-art]"); if (sel) sel.value = a.solo || "no";
+  $("#art-face-label").textContent = faceByKey(state.face)?.label || "this face";
+}
+$$("input[data-pal]").forEach(i => i.addEventListener("input", () => {
+  state.spec.pal[i.dataset.pal] = i.value;
+  $$("#presets .preset").forEach(x => x.classList.remove("on"));
+  markDirty(); rerenderView();
+}));
+$$("input[data-geo]").forEach(i => i.addEventListener("input", () => {
+  state.spec.geo[i.dataset.geo] = +i.value; i.nextElementSibling.textContent = i.value;
+  markDirty(); rerenderView();
+}));
+$$("input[data-art]").forEach(i => i.addEventListener("input", () => {
+  const f = state.spec.faces[state.face]; if (!f?.path){ i.nextElementSibling.textContent = i.value; return; }
+  f[i.dataset.art] = +i.value; i.nextElementSibling.textContent = i.value;
+  markDirty(); rerenderView();
+}));
+document.querySelector("select[data-art]").addEventListener("change", e => {
+  const f = state.spec.faces[state.face]; if (!f?.path) return;
+  f.solo = e.target.value; markDirty(); rerenderView();
+});
+$$("input[data-mat]").forEach(i => i.addEventListener("input", () => {
+  state.spec.mat[i.dataset.mat] = i.value; markDirty(); rerenderView();
+}));
+$("#mat-mono").addEventListener("input", e => { state.spec.mat.mono = e.target.value; markDirty(); rerenderView(); });
+$("#mat-show").addEventListener("change", e => { state.spec.mat.showMono = e.target.value; markDirty(); rerenderView(); });
+</script>
+<script>
+/* =========================================================
+   views
+   ========================================================= */
+let currentView = "lab";
+$("#tabs").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  currentView = b.dataset.view;
+  $$("#tabs button").forEach(x => x.classList.toggle("on", x === b));
+  $$(".view").forEach(v => v.classList.toggle("on", v.id === "view-"+currentView));
+  rerenderView();
+});
+function rerenderView(){
+  if (currentView === "lab") renderLab();
+  else if (currentView === "set") renderSet();
+  else renderTable();
+}
+
+/* ----- Tile Lab ----- */
+function buildFacebar(){
+  const bar = $("#facebar"); bar.innerHTML = "";
+  let group = "";
+  FACES.forEach(f => {
+    if (f.group !== group){
+      group = f.group;
+      const h = document.createElement("span"); h.className = "fgroup"; h.textContent = group;
+      bar.appendChild(h);
+    }
+    const b = document.createElement("button");
+    b.className = "fbtn" + (f.key === state.face ? " on" : "");
+    b.dataset.key = f.key; b.title = f.label;
+    b.innerHTML = faceSVG(f.key, state.spec.pal);
+    b.addEventListener("click", () => { state.face = f.key; buildFacebar(); syncControls(); renderLab(); });
+    bar.appendChild(b);
+  });
+}
+let labFlipped = false;
+function renderLab(){
+  const P = state.spec.pal, r = state.spec.geo.radius;
+  const front = $("#lab-front"), back = $("#lab-back"), tile = $("#lab-tile");
+  front.style.background = faceBG(P); front.style.borderRadius = r+"%/"+(r*0.75)+"%";
+  back.style.background = backBG(P);  back.style.borderRadius  = r+"%/"+(r*0.75)+"%";
+  front.innerHTML = faceHTML(state.face);
+  back.innerHTML = backSVG(P);
+  tile.style.transform = labFlipped ? "rotateY(180deg)" : "";
+  /* refresh facebar engravings if palette changed */
+  $$("#facebar .fbtn").forEach(b => {
+    b.querySelector("svg")?.remove();
+    b.insertAdjacentHTML("beforeend", faceSVG(b.dataset.key, P));
+    b.querySelector("svg").style.background = faceBG(P);
+  });
+}
+const stage = $("#lab-stage"), labTile = $("#lab-tile");
+stage.addEventListener("mousemove", e => {
+  if (labFlipped) return;
+  const rct = labTile.getBoundingClientRect();
+  const x = (e.clientX - rct.left)/rct.width - .5, y = (e.clientY - rct.top)/rct.height - .5;
+  labTile.style.transition = "transform .15s linear";
+  labTile.style.transform = `rotateY(${x*30}deg) rotateX(${-y*24}deg)`;
+});
+stage.addEventListener("mouseleave", () => {
+  labTile.style.transition = "transform .8s cubic-bezier(.22,.9,.28,1)";
+  labTile.style.transform = labFlipped ? "rotateY(180deg)" : "";
+});
+labTile.addEventListener("click", () => {
+  labFlipped = !labFlipped;
+  labTile.style.transition = "transform .8s cubic-bezier(.22,.9,.28,1)";
+  labTile.style.transform = labFlipped ? "rotateY(180deg)" : "";
+});
+
+/* ----- Full Set ----- */
+$("#set-size").addEventListener("input", e => {
+  $("#set-body").style.setProperty("--setw", e.target.value+"px");
+});
+$("#set-mode").addEventListener("click", e => {
+  state.setMode = state.setMode === "unique" ? "full" : "unique";
+  e.target.textContent = state.setMode === "unique" ? "Show every tile" : "Show unique faces";
+  renderSet();
+});
+function setTileHTML(key, count){
+  const P = state.spec.pal, r = state.spec.geo.radius;
+  return `<div class="set-tile" data-key="${key}" style="background:${faceBG(P)};border-radius:${r*0.7}px" title="${faceByKey(key)?.label||""}">
+    ${faceHTML(key)}${count ? `<span class="count">×${count}</span>` : ""}</div>`;
+}
+function renderSet(){
+  const P = state.spec.pal;
+  const groups = [...new Set(FACES.map(f => f.group))];
+  let html = "";
+  groups.forEach(g => {
+    const faces = FACES.filter(f => f.group === g);
+    html += `<div class="suit-row"><h3><em>${g}</em><small>${faces.reduce((n,f)=>n+FACE_COUNT(f.key),0)} tiles</small></h3><div class="suit-tiles">`;
+    faces.forEach(f => {
+      if (state.setMode === "unique") html += setTileHTML(f.key, FACE_COUNT(f.key));
+      else html += setTileHTML(f.key, 0).repeat(FACE_COUNT(f.key));
+    });
+    html += `</div></div>`;
+  });
+  html += `<div class="suit-row"><h3><em>The Back</em><small>every tile</small></h3><div class="suit-tiles">
+    <div class="set-tile backtile" style="background:${backBG(P)};border-radius:${state.spec.geo.radius*0.7}px">${backSVG(P)}</div>
+  </div></div>`;
+  $("#set-body").innerHTML = html;
+  /* clicking a set tile jumps to it in the lab */
+  $$("#set-body .set-tile[data-key]").forEach(t => t.addEventListener("click", () => {
+    state.face = t.dataset.key;
+    currentView = "lab";
+    $$("#tabs button").forEach(x => x.classList.toggle("on", x.dataset.view === "lab"));
+    $$(".view").forEach(v => v.classList.toggle("on", v.id === "view-lab"));
+    buildFacebar(); syncControls(); renderLab();
+  }));
+}
+
+/* ----- Table scene ----- */
+function renderTable(){
+  const P = state.spec.pal, M = state.spec.mat;
+  const mat = $("#table-mat");
+  mat.style.background = `radial-gradient(100% 100% at 50% 0%, ${shade(M.color,.18)} 0%, ${M.color} 60%, ${shade(M.color,-.4)} 100%)`;
+  mat.style.setProperty("--kl", M.keyline+"66");
+  const cm = mat.querySelector(".center-mark");
+  cm.style.color = M.keyline+"66";
+  cm.textContent = M.mono || "";
+  cm.style.display = M.showMono === "yes" ? "flex" : "none";
+  mat.querySelectorAll(".trow").forEach(r => r.remove());
+  const mkTile = (w, faceKey) => {
+    const h = w*1.32, d = Math.max(6, w*.42);
+    const back = `background:${backBG(P)};box-shadow:inset 0 0 0 1px ${P.accent}44`;
+    const face = `background:${faceBG(P)}`;
+    return `<div class="t3d" style="width:${w}px;height:${h}px">
+      <div class="tf" style="width:${w}px;height:${h}px;${faceKey?face:back};transform:translateZ(${d/2}px)">${faceKey?faceHTML(faceKey):""}</div>
+      <div class="tt" style="width:${w}px;height:${d}px;background:${shade(faceKey?P.face:P.back,.25)};transform:rotateX(90deg) translateZ(${d/2}px);transform-origin:top"></div>
+    </div>`;
+  };
+  /* far wall: two stacked rows of backs */
+  const wallW = 34, wallN = 16;
+  const wall = document.createElement("div");
+  wall.className = "trow";
+  wall.style.cssText = `top:14%;transform:translateX(-50%);`;
+  wall.innerHTML = Array.from({length:wallN}, () => mkTile(wallW)).join("");
+  mat.appendChild(wall);
+  /* near hand: 13 faces standing */
+  const handKeys = ["c2","c2","c2","b5","b5","b5","d7","d7","wE","wE","drR","fl","jk"];
+  const hand = document.createElement("div");
+  hand.className = "trow";
+  hand.style.cssText = `bottom:10%;transform:translateX(-50%) rotateX(-38deg);transform-origin:bottom;`;
+  hand.innerHTML = handKeys.map(k => mkTile(40,k)).join("");
+  mat.appendChild(hand);
+  /* fix svg sizing inside t3d faces */
+  mat.querySelectorAll(".tf svg").forEach(s => { s.style.position="absolute"; s.style.inset=0; s.style.width="100%"; s.style.height="100%"; });
+  mat.querySelectorAll(".tf img.art").forEach(im => { im.style.position="absolute"; im.style.inset=0; im.style.width="100%"; im.style.height="100%"; });
+}
+$("#view-table").addEventListener("click", () => $("#view-table").classList.toggle("flat"));
+
+/* =========================================================
+   team + waitlist modals
+   ========================================================= */
+$$(".modal [data-close]").forEach(b => b.addEventListener("click", () => b.closest(".modal").classList.remove("on")));
+$$(".modal").forEach(m => m.addEventListener("click", e => { if (e.target === m) m.classList.remove("on"); }));
+
+$("#open-team").addEventListener("click", async () => {
+  const { data, error } = await sb.from("gm_allowlist").select("*").order("created_at");
+  if (error) return toast(esc(error.message));
+  $("#team-list").innerHTML = data.map(m =>
+    `<li><span>${esc(m.display_name || m.email.split("@")[0])} · ${esc(m.email)}</span><small>${esc(m.added_by||"")}</small></li>`).join("");
+  $("#modal-team").classList.add("on");
+});
+$("#team-add-btn").addEventListener("click", async () => {
+  const email = $("#team-email").value.trim();
+  if (!email) return;
+  const { error } = await sb.from("gm_allowlist").insert({ email, added_by: state.user.email });
+  if (error) return toast(esc(error.message));
+  $("#team-email").value = "";
+  toast("<b>" + esc(email) + "</b> can now enter the studio");
+  $("#open-team").click();
+});
+$("#open-waitlist").addEventListener("click", async () => {
+  const { data, error } = await sb.from("gm_waitlist").select("*").order("created_at", { ascending:false });
+  if (error) return toast(esc(error.message));
+  $("#wl-count").innerHTML = `<b style="color:var(--brass)">${data.length}</b> seats spoken for. First pressing is 300 to 500 sets.`;
+  $("#wl-list").innerHTML = data.map(w =>
+    `<li>${esc(w.email)} <small style="color:#5E6880">· ${new Date(w.created_at).toLocaleDateString()} · ${esc(w.source||"")}</small></li>`).join("")
+    || `<li style="color:#5E6880">No signups yet. Share the site.</li>`;
+  $("#modal-waitlist").classList.add("on");
+});
+
+/* =========================================================
+   PNG tile sheet export (for sharing and manufacturer briefs)
+   ========================================================= */
+async function exportPNG(){
+  toast("Composing the tile sheet…");
+  const P = state.spec.pal, r = state.spec.geo.radius;
+  const TW = 220, TH = Math.round(TW*145/110), GAP = 26, COLS = 9, PAD = 70, HEAD = 130;
+  const keys = FACES.map(f => f.key).concat(["__back"]);
+  const rows = Math.ceil(keys.length / COLS);
+  const cv = document.createElement("canvas");
+  cv.width = PAD*2 + COLS*TW + (COLS-1)*GAP;
+  cv.height = HEAD + PAD*2 + rows*TH + (rows-1)*GAP;
+  const ctx = cv.getContext("2d");
+  /* paper */
+  ctx.fillStyle = "#F5EFE3"; ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.fillStyle = "#20201C";
+  ctx.font = `300 54px Fraunces, Georgia, serif`;
+  ctx.fillText((state.design?.name || "Gathered") , PAD, 84);
+  ctx.font = `500 20px Inter, sans-serif`;
+  ctx.fillStyle = "#A67F3B";
+  const vno = state.versions.find(v => v.id === state.loadedVersion)?.version_no;
+  ctx.fillText(("GATHERED MAHJONG · COLLECTION SHEET" + (vno ? " · V"+vno : "") + " · " + new Date().toLocaleDateString()).toUpperCase(), PAD, 112);
+  const svg2img = str => new Promise(res => {
+    const im = new Image();
+    im.onload = () => res(im);
+    im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(str);
+  });
+  const rr = (x,y,w,h,rad) => {
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(x,y,w,h,rad) : ctx.rect(x,y,w,h);
+  };
+  for (let i=0;i<keys.length;i++){
+    const k = keys[i];
+    const x = PAD + (i%COLS)*(TW+GAP), y = HEAD + PAD + Math.floor(i/COLS)*(TH+GAP);
+    const rad = TW*(r/100)*1.6;
+    /* tile body */
+    const g = ctx.createLinearGradient(x,y,x+TW,y+TH);
+    if (k === "__back"){ g.addColorStop(0, shade(P.back,.2)); g.addColorStop(1, shade(P.back,-.35)); }
+    else { g.addColorStop(0, shade(P.face,.5)); g.addColorStop(.55, P.face); g.addColorStop(1, shade(P.face,-.12)); }
+    ctx.save();
+    ctx.shadowColor = "rgba(28,26,20,.35)"; ctx.shadowBlur = 18; ctx.shadowOffsetY = 8;
+    ctx.fillStyle = g; rr(x,y,TW,TH,rad); ctx.fill();
+    ctx.restore();
+    /* engraving + artwork */
+    const im = await svg2img(k === "__back" ? backSVG(P) : faceSVG(k,P));
+    ctx.drawImage(im, x, y, TW, TH);
+    const a = state.spec.faces[k];
+    if (a?.path && state.assetUrls[a.path]){
+      try {
+        const art = await new Promise((res,rej) => {
+          const q = new Image(); q.crossOrigin = "anonymous";
+          q.onload = () => res(q); q.onerror = rej;
+          q.src = state.assetUrls[a.path];
+        });
+        ctx.save();
+        rr(x,y,TW,TH,rad); ctx.clip();
+        ctx.globalAlpha = (a.opacity??100)/100;
+        ctx.translate(x+TW/2 + (a.x||0)/100*TW, y+TH/2 + (a.y||0)/100*TH);
+        ctx.rotate((a.rot||0)*Math.PI/180);
+        const s = (a.scale||100)/100, fit = Math.min(TW/art.width, TH/art.height)*s;
+        ctx.drawImage(art, -art.width*fit/2, -art.height*fit/2, art.width*fit, art.height*fit);
+        ctx.restore();
+      } catch { /* cross-origin hiccup: sheet still exports without this art */ }
+    }
+  }
+  cv.toBlob(blob => {
+    const a = Object.assign(document.createElement("a"), {
+      href: URL.createObjectURL(blob),
+      download: (state.design?.name||"gathered").replace(/\s+/g,"-").toLowerCase()+"-tile-sheet.png"
+    });
+    a.click(); URL.revokeObjectURL(a.href);
+    toast("Tile sheet exported. <b>Send it to the makers.</b>");
+  }, "image/png");
+}
+$("#set-export").addEventListener("click", exportPNG);
+
+/* warn before leaving with unsaved work */
+addEventListener("beforeunload", e => { if (state.dirty){ e.preventDefault(); e.returnValue = ""; } });
+</script>
+</body>
+</html>

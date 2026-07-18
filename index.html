@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gathered Mahjong | Art, Friendship &amp; the Table Between Us</title>
+<meta name="description" content="Gathered is a boutique mahjong brand born of friendship. Heirloom tile sets hand-painted from the artwork of Nha Vuu. Join the VIP waitlist for first access to Collection No. 001.">
+<meta property="og:title" content="Gathered Mahjong">
+<meta property="og:description" content="Heirloom mahjong sets born of art, friendship, and the ritual of gathering. Collection No. 001, Modern Palms, arriving soon.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://gatheredmahjong.com">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="4" y="2" width="56" height="60" rx="10" fill="%2314264E"/><text x="32" y="44" font-family="Georgia,serif" font-size="34" fill="%23C6A15B" text-anchor="middle">G</text></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ GATHERED MAHJONG :: design system ============ */
+:root{
+  --indigo:#14264E;          /* deep blue tile backing */
+  --indigo-deep:#0B1834;
+  --indigo-soft:#23386B;
+  --ivory:#F5EFE3;           /* handmade-paper ivory */
+  --bone:#FBF7EE;            /* tile face bone */
+  --paper:#F1EADA;
+  --ink:#20201C;
+  --brass:#C6A15B;           /* muted gold */
+  --brass-deep:#A67F3B;
+  --palm:#41604E;            /* palm green */
+  --clay:#A9502F;            /* red dragon clay */
+  --serif:"Fraunces",Georgia,serif;
+  --sans:"Inter",-apple-system,"Segoe UI",sans-serif;
+  --cjk:"Noto Serif TC","Songti TC","SimSun","MS Mincho",serif;
+  --ease:cubic-bezier(.22,.9,.28,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--ivory);color:var(--ink);
+  font-family:var(--sans);font-weight:300;line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* subtle handmade-paper grain over everything */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:4000;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+::selection{background:var(--indigo);color:var(--bone)}
+h1,h2,h3,.serif{font-family:var(--serif);font-weight:400;line-height:1.12}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+
+/* ---------- utility ---------- */
+.wrap{width:min(1200px,92vw);margin-inline:auto}
+.label{
+  font-family:var(--sans);font-size:.72rem;font-weight:500;
+  letter-spacing:.32em;text-transform:uppercase;color:var(--brass-deep);
+}
+.label--light{color:var(--brass)}
+.rule{display:inline-block;width:44px;height:1px;background:var(--brass);vertical-align:middle;margin-right:14px}
+
+/* scroll reveal */
+.rv{opacity:0;transform:translateY(34px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.rv.on{opacity:1;transform:none}
+.rv2{opacity:0;transform:translateY(20px) scale(.97);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv2.on{opacity:1;transform:none}
+
+/* ============ preloader ============ */
+#loader{
+  position:fixed;inset:0;z-index:5000;background:var(--indigo-deep);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;
+  transition:opacity .8s ease,visibility .8s;
+}
+#loader.done{opacity:0;visibility:hidden}
+#loader .ltile{
+  width:74px;height:96px;border-radius:10px;perspective:700px;
+}
+#loader .ltile-inner{
+  width:100%;height:100%;position:relative;transform-style:preserve-3d;
+  animation:lflip 2.1s var(--ease) infinite;
+}
+@keyframes lflip{0%{transform:rotateY(0)}45%,55%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
+#loader .lface{
+  position:absolute;inset:0;border-radius:10px;backface-visibility:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+#loader .lface.f{background:linear-gradient(160deg,#FDFAF3,#EFE6D2);box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+#loader .lface.b{background:linear-gradient(160deg,#1B3160,#0F2044);transform:rotateY(180deg);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+#loader .lface span{font-family:var(--serif);font-size:2.1rem;color:var(--brass)}
+#loader p{color:var(--brass);font-size:.7rem;letter-spacing:.42em;text-transform:uppercase;font-family:var(--sans)}
+
+/* ============ nav ============ */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  transition:background .5s,box-shadow .5s,transform .5s;
+}
+header .bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 0;transition:padding .5s;
+}
+header.scrolled{background:rgba(245,239,227,.88);backdrop-filter:blur(14px);box-shadow:0 1px 0 rgba(32,32,28,.08)}
+header.scrolled .bar{padding:14px 0}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{
+  width:34px;height:44px;border-radius:6px;background:var(--indigo);
+  display:flex;align-items:center;justify-content:center;flex:none;
+  box-shadow:0 3px 8px rgba(20,38,78,.3),inset 0 0 0 1px rgba(255,255,255,.1);
+  transition:transform .6s var(--ease);
+}
+.logo:hover .logo-mark{transform:rotateY(180deg)}
+.logo-mark span{font-family:var(--serif);color:var(--brass);font-size:1.25rem}
+.logo-type{font-family:var(--serif);font-size:1.3rem;letter-spacing:.02em}
+.logo-type em{font-style:italic;color:var(--brass-deep)}
+nav.links{display:flex;gap:38px;align-items:center}
+nav.links a{
+  font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;font-weight:400;
+  position:relative;padding:4px 0;
+}
+nav.links a:not(.cta)::after{
+  content:"";position:absolute;left:0;bottom:0;height:1px;width:0;background:var(--brass-deep);
+  transition:width .4s var(--ease);
+}
+nav.links a:not(.cta):hover::after{width:100%}
+.cta{
+  background:var(--indigo);color:var(--bone)!important;padding:12px 26px;border-radius:100px;
+  transition:background .35s,transform .35s,box-shadow .35s;box-shadow:0 4px 14px rgba(20,38,78,.22);
+}
+.cta:hover{background:var(--indigo-soft);transform:translateY(-2px);box-shadow:0 8px 22px rgba(20,38,78,.3)}
+.burger{display:none;background:none;border:none;flex-direction:column;gap:5px;padding:6px}
+.burger i{display:block;width:24px;height:1.5px;background:var(--ink);transition:.4s}
+
+/* ============ hero ============ */
+#hero{
+  min-height:100svh;position:relative;display:flex;align-items:center;
+  padding:130px 0 80px;overflow:hidden;
+}
+#frond-bg{position:absolute;inset:0;pointer-events:none;opacity:.55}
+#frond-bg svg{position:absolute}
+#frond-bg .stroke{fill:none;stroke:var(--palm);stroke-width:1.4;opacity:.35}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;position:relative;z-index:2}
+.hero-copy .label{display:block;margin-bottom:22px}
+.hero-copy h1{
+  font-size:clamp(2.9rem,6.2vw,5.2rem);font-weight:300;letter-spacing:-.015em;
+}
+.hero-copy h1 em{font-style:italic;color:var(--indigo)}
+.hero-copy h1 .gold{color:var(--brass-deep)}
+.hero-copy p.lede{
+  margin:30px 0 40px;font-size:1.06rem;max-width:44ch;color:#4c4a42;
+}
+.hero-ctas{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:16px 34px;border-radius:100px;font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;font-weight:500;
+  transition:transform .35s var(--ease),box-shadow .35s,background .35s;border:none;
+}
+.btn-primary{background:var(--indigo);color:var(--bone);box-shadow:0 6px 18px rgba(20,38,78,.28)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(20,38,78,.36);background:var(--indigo-soft)}
+.btn-ghost{border:1px solid rgba(32,32,28,.28);color:var(--ink);background:transparent}
+.btn-ghost:hover{border-color:var(--brass-deep);color:var(--brass-deep);transform:translateY(-3px)}
+.hero-note{margin-top:26px;font-size:.8rem;color:#77746a;display:flex;align-items:center;gap:10px}
+.hero-note .dot{width:7px;height:7px;border-radius:50%;background:var(--palm);animation:pulse 2.4s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(65,96,78,.35)}50%{box-shadow:0 0 0 7px rgba(65,96,78,0)}}
+
+/* hero tile tableau */
+.tableau{position:relative;height:min(620px,72vw);perspective:1400px}
+.float-tile{
+  position:absolute;will-change:transform;
+  animation:bob 7s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{translate:0 0}50%{translate:0 -14px}}
+.scroll-hint{
+  position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:3;
+  display:flex;flex-direction:column;align-items:center;gap:8px;color:#8a867a;font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;
+}
+.scroll-hint .line{width:1px;height:44px;background:linear-gradient(var(--brass-deep),transparent);animation:drip 2s var(--ease) infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ============ the tile itself (used everywhere) ============ */
+.tile{
+  --tw:110px;
+  width:var(--tw);aspect-ratio:11/14.5;perspective:900px;flex:none;
+}
+.tile-inner{
+  width:100%;height:100%;position:relative;transform-style:preserve-3d;
+  transition:transform 1s var(--ease);
+}
+.tile.flipped .tile-inner,.tile:hover .tile-inner{transform:rotateY(180deg)}
+.tile.noflip:hover .tile-inner{transform:none}
+.face{
+  position:absolute;inset:0;backface-visibility:hidden;border-radius:12%/9%;
+  overflow:hidden;
+}
+.face.front{
+  background:linear-gradient(155deg,#FDFAF3 0%,#F7F0DF 55%,#EDE2C9 100%);
+  box-shadow:
+    0 14px 30px -8px rgba(28,26,20,.35),
+    inset 0 2px 2px rgba(255,255,255,.9),
+    inset 0 -3px 5px rgba(120,100,60,.18),
+    inset 0 0 0 1px rgba(120,100,60,.12);
+}
+.face.back{
+  transform:rotateY(180deg);
+  background:
+    radial-gradient(120% 90% at 30% 15%,#24396D 0%,var(--indigo) 55%,#0E1D3E 100%);
+  box-shadow:
+    0 14px 30px -8px rgba(12,20,44,.5),
+    inset 0 2px 2px rgba(255,255,255,.16),
+    inset 0 -3px 6px rgba(0,0,0,.45),
+    inset 0 0 0 1px rgba(198,161,91,.25);
+  display:flex;align-items:center;justify-content:center;
+}
+.face svg{width:100%;height:100%}
+.tile .cjk{font-family:var(--cjk)}
+
+/* ============ marquee ============ */
+#marquee{
+  background:var(--indigo);color:var(--bone);overflow:hidden;padding:20px 0;
+  border-top:1px solid rgba(198,161,91,.35);border-bottom:1px solid rgba(198,161,91,.35);
+}
+.marquee-track{display:flex;width:max-content;animation:scrollx 34s linear infinite}
+#marquee:hover .marquee-track{animation-play-state:paused}
+.marquee-track span{
+  font-family:var(--serif);font-size:1.05rem;font-style:italic;letter-spacing:.06em;
+  padding:0 26px;white-space:nowrap;color:#E8DFC9;
+}
+.marquee-track .diamond{color:var(--brass);font-style:normal}
+@keyframes scrollx{to{transform:translateX(-50%)}}
+</style>
+<style>
+/* ============ section scaffolding ============ */
+section{position:relative}
+.section-pad{padding:120px 0}
+.sec-head{max-width:640px;margin-bottom:70px}
+.sec-head .label{display:block;margin-bottom:18px}
+.sec-head h2{font-size:clamp(2.1rem,4.2vw,3.4rem);font-weight:300}
+.sec-head h2 em{font-style:italic;color:var(--brass-deep)}
+.sec-head p{margin-top:20px;color:#54524a;max-width:54ch}
+
+/* ============ story ============ */
+#story{background:var(--paper)}
+#story::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(166,127,59,.4),transparent);
+}
+.story-grid{display:grid;grid-template-columns:1fr 1fr;gap:min(90px,7vw);align-items:center}
+.story-art{position:relative}
+.story-frame{
+  position:relative;border-radius:4px;background:var(--bone);
+  padding:26px;box-shadow:0 30px 60px -20px rgba(28,26,20,.35);
+  transform:rotate(-1.2deg);
+}
+.story-frame svg{border-radius:2px}
+.story-caption{
+  margin-top:18px;text-align:center;font-family:var(--serif);font-style:italic;
+  color:#6b675c;font-size:.92rem;
+}
+.story-seal{
+  position:absolute;top:-22px;right:-22px;width:64px;height:64px;border-radius:50%;
+  background:var(--clay);color:var(--bone);display:flex;align-items:center;justify-content:center;
+  font-family:var(--cjk);font-size:1.5rem;box-shadow:0 8px 20px rgba(169,80,47,.4);
+  transform:rotate(8deg);
+}
+.story-copy h2{font-size:clamp(2rem,3.8vw,3rem);font-weight:300;margin-bottom:26px}
+.story-copy h2 em{font-style:italic;color:var(--brass-deep)}
+.story-copy p{margin-bottom:18px;color:#4c4a42}
+.founders{display:flex;gap:34px;margin-top:38px;flex-wrap:wrap}
+.founder{display:flex;align-items:center;gap:13px}
+.founder .fmark{
+  width:46px;height:46px;border-radius:50%;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:1.1rem;color:var(--bone);
+}
+.founder:nth-child(1) .fmark{background:var(--indigo)}
+.founder:nth-child(2) .fmark{background:var(--palm)}
+.founder:nth-child(3) .fmark{background:var(--clay)}
+.founder b{display:block;font-weight:500;font-size:.9rem;letter-spacing:.04em}
+.founder small{color:#7b776b;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase}
+
+/* ============ collection ============ */
+#collection{background:var(--ivory);overflow:hidden}
+.coll-tiles{
+  display:flex;gap:clamp(10px,1.8vw,22px);justify-content:center;flex-wrap:wrap;
+  margin-top:10px;
+}
+.coll-tiles .tile{--tw:clamp(84px,10vw,128px)}
+.coll-tiles .tile{opacity:0;transform:translateY(60px) rotate(4deg)}
+.coll-tiles.on .tile{
+  opacity:1;transform:none;
+  transition:opacity .9s var(--ease),transform .9s var(--ease);
+  transition-delay:calc(var(--i)*.09s);
+}
+.coll-hint{text-align:center;margin-top:34px;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:#8a867a}
+.coll-hint b{color:var(--brass-deep);font-weight:500}
+
+/* featured tile viewer */
+.viewer{
+  margin-top:90px;display:grid;grid-template-columns:1fr 1fr;gap:min(80px,6vw);align-items:center;
+  background:var(--indigo);border-radius:24px;padding:min(70px,6vw);
+  color:var(--bone);position:relative;overflow:hidden;
+}
+.viewer::before{
+  content:"";position:absolute;inset:0;opacity:.16;pointer-events:none;
+  background:radial-gradient(60% 90% at 85% 10%,var(--brass) 0%,transparent 60%);
+}
+.viewer-stage{display:flex;justify-content:center;perspective:1200px}
+.viewer-stage .tile{--tw:min(240px,52vw)}
+.viewer-stage .tile .tile-inner{transition:transform .18s linear}
+.viewer-stage .tile:hover .tile-inner{transform:none}
+.viewer-copy .label{display:block;margin-bottom:16px}
+.viewer-copy h3{font-size:clamp(1.7rem,3vw,2.5rem);font-weight:300;margin-bottom:18px}
+.viewer-copy h3 em{font-style:italic;color:var(--brass)}
+.viewer-copy p{color:#C9C4B4;max-width:46ch;margin-bottom:30px}
+.swatches{display:flex;gap:12px;flex-wrap:wrap}
+.swatch{
+  border:1px solid rgba(251,247,238,.25);background:transparent;color:var(--bone);
+  padding:10px 20px;border-radius:100px;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;
+  transition:all .35s var(--ease);
+}
+.swatch:hover{border-color:var(--brass);color:var(--brass);transform:translateY(-2px)}
+.swatch.active{background:var(--brass);border-color:var(--brass);color:var(--indigo-deep);font-weight:600}
+
+/* ============ craft numbers ============ */
+#craft{background:var(--paper)}
+.craft-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:40px;text-align:center}
+.craft-cell{padding:36px 18px;position:relative}
+.craft-cell:not(:last-child)::after{
+  content:"";position:absolute;right:-20px;top:25%;bottom:25%;width:1px;
+  background:linear-gradient(transparent,rgba(166,127,59,.45),transparent);
+}
+.craft-cell .num{
+  font-family:var(--serif);font-size:clamp(2.6rem,4.5vw,3.8rem);color:var(--indigo);
+  font-weight:300;line-height:1;
+}
+.craft-cell .num sup{font-size:.45em;color:var(--brass-deep)}
+.craft-cell p{margin-top:14px;font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;color:#7b776b}
+
+/* ============ mat ============ */
+#mat .mat-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:min(90px,7vw);align-items:center}
+.mat-visual{position:relative;perspective:1200px}
+.mat-surface{
+  border-radius:18px;aspect-ratio:16/10.5;position:relative;
+  background:
+    radial-gradient(100% 100% at 50% 0%,#1D3260 0%,var(--indigo) 60%,#0F2044 100%);
+  box-shadow:0 40px 80px -30px rgba(12,20,44,.55),inset 0 0 0 1px rgba(198,161,91,.3),inset 0 0 60px rgba(0,0,0,.35);
+  transform:rotateX(14deg) rotateZ(-2deg);
+  transition:transform .8s var(--ease);
+  overflow:hidden;
+}
+.mat-visual:hover .mat-surface{transform:rotateX(4deg) rotateZ(0)}
+.mat-surface::before{
+  content:"";position:absolute;inset:22px;border-radius:10px;
+  border:1px solid rgba(198,161,91,.4);
+}
+.mat-surface .mat-monogram{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-style:italic;color:rgba(198,161,91,.5);font-size:clamp(2rem,4vw,3.2rem);
+}
+.mat-tiles{position:absolute;bottom:8%;left:50%;transform:translateX(-50%);display:flex;gap:7px}
+.mat-tiles .mini{
+  width:clamp(22px,3vw,34px);aspect-ratio:11/14.5;border-radius:4px;
+  background:linear-gradient(160deg,#FDFAF3,#EFE6D2);
+  box-shadow:0 4px 10px rgba(0,0,0,.4),inset 0 1px 1px #fff;
+  animation:minirise .7s var(--ease) both;
+}
+.mat-copy h2{font-size:clamp(2rem,3.8vw,3rem);font-weight:300;margin-bottom:24px}
+.mat-copy h2 em{font-style:italic;color:var(--brass-deep)}
+.mat-copy p{color:#4c4a42;margin-bottom:18px;max-width:52ch}
+.mat-feats{list-style:none;margin-top:28px;display:grid;gap:14px}
+.mat-feats li{display:flex;gap:14px;align-items:baseline;font-size:.95rem;color:#44423a}
+.mat-feats li::before{content:"◆";color:var(--brass-deep);font-size:.55em;transform:translateY(-2px)}
+
+/* ============ waitlist ============ */
+#waitlist{
+  background:
+    radial-gradient(90% 120% at 50% -10%,#22376A 0%,var(--indigo) 45%,var(--indigo-deep) 100%);
+  color:var(--bone);overflow:hidden;
+}
+#waitlist .inner{position:relative;z-index:2;text-align:center;max-width:660px;margin-inline:auto}
+#waitlist h2{font-size:clamp(2.2rem,4.5vw,3.6rem);font-weight:300;margin:18px 0 20px}
+#waitlist h2 em{font-style:italic;color:var(--brass)}
+#waitlist p.sub{color:#C9C4B4;max-width:50ch;margin:0 auto 44px}
+.wl-form{display:flex;gap:12px;max-width:520px;margin:0 auto;position:relative}
+.wl-form input{
+  flex:1;background:rgba(251,247,238,.07);border:1px solid rgba(251,247,238,.25);
+  border-radius:100px;padding:17px 26px;color:var(--bone);font-family:var(--sans);font-size:.95rem;
+  outline:none;transition:border .3s,background .3s;min-width:0;
+}
+.wl-form input::placeholder{color:#8E97AC}
+.wl-form input:focus{border-color:var(--brass);background:rgba(251,247,238,.11)}
+.wl-form .btn-gold{
+  background:var(--brass);color:var(--indigo-deep);border:none;font-weight:600;
+  padding:17px 32px;border-radius:100px;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;
+  transition:transform .35s var(--ease),box-shadow .35s,background .3s;
+  box-shadow:0 8px 24px rgba(198,161,91,.35);flex:none;
+}
+.wl-form .btn-gold:hover{transform:translateY(-3px);background:#D4B173;box-shadow:0 14px 32px rgba(198,161,91,.45)}
+.wl-perks{display:flex;gap:34px;justify-content:center;margin-top:44px;flex-wrap:wrap}
+.wl-perk{font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:#9BA5BC;display:flex;align-items:center;gap:10px}
+.wl-perk svg{width:15px;height:15px;flex:none}
+.wl-success{display:none;margin-top:26px;color:var(--brass);font-family:var(--serif);font-style:italic;font-size:1.15rem}
+.wl-fine{margin-top:30px;font-size:.72rem;color:#6E7893;letter-spacing:.06em}
+/* drifting tile backs in waitlist bg */
+.wl-float{position:absolute;border-radius:10px;opacity:.14;pointer-events:none;
+  background:linear-gradient(160deg,#2A4076,#16294F);box-shadow:inset 0 0 0 1px rgba(198,161,91,.4);
+  animation:wldrift 16s ease-in-out infinite;
+}
+@keyframes wldrift{0%,100%{transform:translateY(0) rotate(var(--r,8deg))}50%{transform:translateY(-30px) rotate(calc(var(--r,8deg) - 6deg))}}
+
+/* ============ footer ============ */
+footer{background:var(--indigo-deep);color:#9BA5BC;padding:70px 0 40px}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:50px;margin-bottom:56px}
+.foot-brand .logo-type{color:var(--bone);font-size:1.5rem}
+.foot-brand p{margin-top:16px;font-size:.9rem;max-width:34ch}
+footer h4{color:var(--bone);font-family:var(--sans);font-size:.74rem;letter-spacing:.28em;text-transform:uppercase;font-weight:500;margin-bottom:20px}
+footer ul{list-style:none;display:grid;gap:12px;font-size:.9rem}
+footer ul a{transition:color .3s}
+footer ul a:hover{color:var(--brass)}
+.foot-bottom{
+  border-top:1px solid rgba(155,165,188,.18);padding-top:28px;
+  display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+  font-size:.78rem;
+}
+.foot-tiles{display:flex;gap:6px}
+.foot-tiles i{
+  width:14px;height:19px;border-radius:3px;display:block;
+  background:linear-gradient(160deg,#2A4076,#16294F);box-shadow:inset 0 0 0 1px rgba(198,161,91,.35);
+  transition:transform .4s var(--ease),background .4s;
+}
+.foot-tiles:hover i{background:linear-gradient(160deg,#FDFAF3,#EFE6D2)}
+.foot-tiles i:nth-child(2){transition-delay:.05s}.foot-tiles i:nth-child(3){transition-delay:.1s}
+.foot-tiles:hover i{transform:translateY(-4px)}
+
+/* ============ responsive ============ */
+@media(max-width:960px){
+  .hero-grid{grid-template-columns:1fr;gap:10px}
+  .tableau{height:min(430px,90vw);margin-top:10px}
+  .story-grid,.viewer,#mat .mat-grid{grid-template-columns:1fr}
+  .craft-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .craft-cell:nth-child(2)::after{display:none}
+  .foot-grid{grid-template-columns:1fr;gap:36px}
+  nav.links{
+    position:fixed;inset:0;background:var(--ivory);flex-direction:column;justify-content:center;
+    gap:34px;transform:translateY(-100%);transition:transform .6s var(--ease);z-index:-1;
+  }
+  nav.links.open{transform:none}
+  nav.links a{font-size:1rem}
+  .burger{display:flex;z-index:10}
+  .burger.open i:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+  .burger.open i:nth-child(2){opacity:0}
+  .burger.open i:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+  .wl-form{flex-direction:column}
+  .section-pad{padding:84px 0}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.2s!important}
+  html{scroll-behavior:auto}
+  .rv,.rv2,.coll-tiles .tile{opacity:1!important;transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ====== SVG tile-face library :: Gathered original designs, standing in for Nha's artwork ====== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+  <!-- palm frond: curving stem with leaflets -->
+  <g id="frond">
+    <path d="M8 130 C 30 90, 44 55, 50 12" fill="none" stroke-width="2.6" stroke-linecap="round"/>
+    <g stroke-width="1.9" stroke-linecap="round" fill="none">
+      <path d="M46 26 C 34 30, 24 40, 18 52"/>
+      <path d="M48 22 C 58 28, 66 38, 70 50"/>
+      <path d="M42 44 C 31 49, 23 58, 18 69"/>
+      <path d="M44 40 C 54 46, 61 55, 65 66"/>
+      <path d="M36 64 C 27 70, 21 78, 17 88"/>
+      <path d="M38 60 C 47 66, 53 74, 56 84"/>
+      <path d="M28 88 C 21 94, 16 101, 13 110"/>
+      <path d="M30 84 C 38 90, 43 97, 45 106"/>
+    </g>
+  </g>
+  <!-- small blossom rosette (dots suit) -->
+  <g id="rosette">
+    <circle r="11.5" fill="none" stroke-width="2"/>
+    <g stroke-width="1.7" stroke-linecap="round">
+      <path d="M0 -6.5 C 2.8 -3.5, 2.8 3.5, 0 6.5 C -2.8 3.5, -2.8 -3.5, 0 -6.5 Z" fill="currentColor" stroke="none"/>
+      <path d="M-6.5 0 C -3.5 -2.8, 3.5 -2.8, 6.5 0 C 3.5 2.8, -3.5 2.8, -6.5 0 Z" fill="currentColor" stroke="none" opacity=".55"/>
+    </g>
+  </g>
+  <!-- bam stem: a single palm cane -->
+  <g id="cane">
+    <rect x="-3.4" y="-22" width="6.8" height="44" rx="3.4" fill="none" stroke-width="2"/>
+    <line x1="-3.4" y1="-8" x2="3.4" y2="-8" stroke-width="1.6"/>
+    <line x1="-3.4" y1="8" x2="3.4" y2="8" stroke-width="1.6"/>
+    <path d="M0 -22 C -5 -27, -10 -29, -15 -29 M0 -22 C 5 -27, 10 -29, 15 -29" fill="none" stroke-width="1.6" stroke-linecap="round"/>
+  </g>
+
+  <!-- ============ FULL TILE FACES  (viewBox 0 0 110 145) ============ -->
+
+  <!-- 1 Bam · the bird -->
+  <symbol id="t-1bam" viewBox="0 0 110 145">
+    <text x="12" y="26" font-family="Fraunces,Georgia,serif" font-size="17" fill="#A9502F">1</text>
+    <g stroke="#41604E" color="#41604E">
+      <path d="M55 122 C 55 96, 55 80, 55 62" fill="none" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M55 96 C 44 92, 36 84, 33 74 M55 84 C 66 80, 73 73, 76 64" fill="none" stroke-width="1.8" stroke-linecap="round"/>
+    </g>
+    <g fill="#14264E">
+      <path d="M55 62 C 40 62, 32 50, 34 38 C 36 28, 46 22, 56 24 C 62 25, 67 29, 69 35 L 82 32 L 72 42 C 74 54, 66 62, 55 62 Z"/>
+      <path d="M50 40 C 42 36, 38 30, 40 24 C 46 26, 50 32, 50 40 Z" opacity=".75"/>
+    </g>
+    <circle cx="60" cy="34" r="2" fill="#F5EFE3"/>
+    <path d="M69 35 L 79 34" stroke="#C6A15B" stroke-width="2" stroke-linecap="round"/>
+    <text x="86" y="134" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="13" fill="#A67F3B">g</text>
+  </symbol>
+
+  <!-- 5 Bam -->
+  <symbol id="t-5bam" viewBox="0 0 110 145">
+    <text x="12" y="26" font-family="Fraunces,Georgia,serif" font-size="17" fill="#41604E">5</text>
+    <g stroke="#41604E" color="#41604E">
+      <use href="#cane" x="33" y="48"/>
+      <use href="#cane" x="77" y="48"/>
+      <use href="#cane" x="55" y="73"/>
+      <use href="#cane" x="33" y="99"/>
+      <use href="#cane" x="77" y="99"/>
+    </g>
+    <text x="86" y="134" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="13" fill="#A67F3B">g</text>
+  </symbol>
+
+  <!-- 3 Dot -->
+  <symbol id="t-3dot" viewBox="0 0 110 145">
+    <text x="12" y="26" font-family="Fraunces,Georgia,serif" font-size="17" fill="#14264E">3</text>
+    <g color="#14264E" stroke="#14264E" fill="#14264E">
+      <use href="#rosette" x="33" y="46"/>
+    </g>
+    <g color="#A9502F" stroke="#A9502F" fill="#A9502F">
+      <use href="#rosette" x="55" y="76"/>
+    </g>
+    <g color="#41604E" stroke="#41604E" fill="#41604E">
+      <use href="#rosette" x="77" y="106"/>
+    </g>
+    <text x="86" y="134" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="13" fill="#A67F3B">g</text>
+  </symbol>
+
+  <!-- 7 Crak -->
+  <symbol id="t-7crak" viewBox="0 0 110 145">
+    <text x="12" y="26" font-family="Fraunces,Georgia,serif" font-size="17" fill="#A9502F">7</text>
+    <text x="55" y="66" text-anchor="middle" font-family="'Noto Serif TC','Songti TC','SimSun',serif" font-size="40" fill="#20201C">七</text>
+    <text x="55" y="116" text-anchor="middle" font-family="'Noto Serif TC','Songti TC','SimSun',serif" font-size="34" fill="#A9502F">萬</text>
+  </symbol>
+
+  <!-- East wind -->
+  <symbol id="t-east" viewBox="0 0 110 145">
+    <text x="14" y="28" font-family="Fraunces,Georgia,serif" font-size="15" letter-spacing="1" fill="#14264E">E</text>
+    <text x="55" y="92" text-anchor="middle" font-family="'Noto Serif TC','Songti TC','SimSun',serif" font-size="52" fill="#14264E">東</text>
+    <path d="M30 116 H 80" stroke="#C6A15B" stroke-width="1.4"/>
+  </symbol>
+
+  <!-- Green dragon -->
+  <symbol id="t-green" viewBox="0 0 110 145">
+    <text x="55" y="90" text-anchor="middle" font-family="'Noto Serif TC','Songti TC','SimSun',serif" font-size="54" fill="#41604E">發</text>
+    <path d="M30 112 H 80" stroke="#41604E" stroke-width="1.4" opacity=".6"/>
+  </symbol>
+
+  <!-- Red dragon -->
+  <symbol id="t-red" viewBox="0 0 110 145">
+    <text x="55" y="90" text-anchor="middle" font-family="'Noto Serif TC','Songti TC','SimSun',serif" font-size="54" fill="#A9502F">中</text>
+    <path d="M30 112 H 80" stroke="#A9502F" stroke-width="1.4" opacity=".6"/>
+  </symbol>
+
+  <!-- White dragon / soap -->
+  <symbol id="t-white" viewBox="0 0 110 145">
+    <rect x="26" y="30" width="58" height="84" rx="6" fill="none" stroke="#14264E" stroke-width="2.4"/>
+    <rect x="36" y="42" width="38" height="60" rx="3" fill="none" stroke="#C6A15B" stroke-width="1.4"/>
+  </symbol>
+
+  <!-- Flower · Modern Palm no.1 -->
+  <symbol id="t-flower" viewBox="0 0 110 145">
+    <g stroke="#41604E" color="#41604E" transform="translate(24,6)">
+      <use href="#frond"/>
+    </g>
+    <g stroke="#C6A15B" color="#C6A15B" transform="translate(48,18) scale(.72)" opacity=".85">
+      <use href="#frond"/>
+    </g>
+    <text x="16" y="134" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="12" fill="#A67F3B">palm no.1</text>
+  </symbol>
+
+  <!-- Joker · the Gatherer -->
+  <symbol id="t-joker" viewBox="0 0 110 145">
+    <circle cx="55" cy="66" r="30" fill="none" stroke="#C6A15B" stroke-width="1.6"/>
+    <text x="55" y="80" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="40" fill="#14264E">G</text>
+    <g stroke="#41604E" color="#41604E" transform="translate(30,96) scale(.34)">
+      <use href="#frond"/>
+    </g>
+    <g stroke="#41604E" color="#41604E" transform="translate(80,96) scale(-.34,.34)">
+      <use href="#frond"/>
+    </g>
+    <text x="55" y="132" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-size="10" letter-spacing="3" fill="#A67F3B">JOKER</text>
+  </symbol>
+
+  <!-- Tile back artwork -->
+  <symbol id="t-back" viewBox="0 0 110 145">
+    <rect x="8" y="8" width="94" height="129" rx="10" fill="none" stroke="#C6A15B" stroke-width="1.2" opacity=".55"/>
+    <g stroke="#C6A15B" color="#C6A15B" opacity=".38" transform="translate(28,10) scale(.8)">
+      <use href="#frond"/>
+    </g>
+    <text x="55" y="88" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="34" fill="#C6A15B">G</text>
+  </symbol>
+</defs>
+</svg>
+
+<!-- ====== preloader ====== -->
+<div id="loader" aria-hidden="true">
+  <div class="ltile"><div class="ltile-inner">
+    <div class="lface f"><svg viewBox="0 0 110 145"><use href="#t-flower"/></svg></div>
+    <div class="lface b"><span>G</span></div>
+  </div></div>
+  <p>Gathered</p>
+</div>
+
+<!-- ====== nav ====== -->
+<header id="top">
+  <div class="wrap bar">
+    <a class="logo" href="#top" aria-label="Gathered Mahjong home">
+      <span class="logo-mark"><span>G</span></span>
+      <span class="logo-type">Gathered <em>Mahjong</em></span>
+    </a>
+    <nav class="links" id="navlinks">
+      <a href="#story">Our Story</a>
+      <a href="#collection">The Collection</a>
+      <a href="#mat">The Mat</a>
+      <a href="#waitlist" class="cta">Join the Waitlist</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Menu"><i></i><i></i><i></i></button>
+  </div>
+</header>
+
+<!-- ====== hero ====== -->
+<section id="hero">
+  <div id="frond-bg" aria-hidden="true">
+    <svg style="top:-40px;right:-60px;width:520px;transform:rotate(160deg)" viewBox="0 0 100 140">
+      <g transform="scale(.72)"><path class="stroke draw" d="M8 130 C 30 90, 44 55, 50 12 M46 26 C 34 30, 24 40, 18 52 M48 22 C 58 28, 66 38, 70 50 M42 44 C 31 49, 23 58, 18 69 M44 40 C 54 46, 61 55, 65 66 M36 64 C 27 70, 21 78, 17 88 M38 60 C 47 66, 53 74, 56 84 M28 88 C 21 94, 16 101, 13 110 M30 84 C 38 90, 43 97, 45 106"/></g>
+    </svg>
+    <svg style="bottom:-70px;left:-80px;width:600px;transform:rotate(-12deg)" viewBox="0 0 100 140">
+      <g transform="scale(.72)"><path class="stroke draw" d="M8 130 C 30 90, 44 55, 50 12 M46 26 C 34 30, 24 40, 18 52 M48 22 C 58 28, 66 38, 70 50 M42 44 C 31 49, 23 58, 18 69 M44 40 C 54 46, 61 55, 65 66 M36 64 C 27 70, 21 78, 17 88 M38 60 C 47 66, 53 74, 56 84 M28 88 C 21 94, 16 101, 13 110 M30 84 C 38 90, 43 97, 45 106"/></g>
+    </svg>
+  </div>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="label rv"><span class="rule"></span>A boutique mahjong house</span>
+      <h1 class="rv" style="transition-delay:.08s">The art of<br><em>gathering</em>,<br><span class="gold">tile by tile.</span></h1>
+      <p class="lede rv" style="transition-delay:.16s">Born of three friends and the brush of artist Nha Vuu. Heirloom mahjong sets where contemporary eastern brushwork meets the ritual of the table. Collection No.&nbsp;001 arrives soon, in a first run of only a few hundred sets.</p>
+      <div class="hero-ctas rv" style="transition-delay:.24s">
+        <a class="btn btn-primary" href="#waitlist">Join the VIP Waitlist</a>
+        <a class="btn btn-ghost" href="#story">Our Story</a>
+      </div>
+      <div class="hero-note rv" style="transition-delay:.32s"><span class="dot"></span>Collection No. 001 · Modern Palms · limited first pressing</div>
+    </div>
+    <div class="tableau" id="tableau" aria-hidden="true">
+      <div class="float-tile" data-depth="34" style="top:4%;left:16%;animation-delay:-1s">
+        <div class="tile flipped" style="--tw:clamp(90px,10vw,132px);transform:rotate(-9deg)"><div class="tile-inner">
+          <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-flower"/></svg></div>
+          <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+        </div></div>
+      </div>
+      <div class="float-tile" data-depth="20" style="top:0;right:6%;animation-delay:-3.4s">
+        <div class="tile" style="--tw:clamp(76px,8.4vw,110px);transform:rotate(7deg)"><div class="tile-inner">
+          <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-1bam"/></svg></div>
+          <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+        </div></div>
+      </div>
+      <div class="float-tile" data-depth="48" style="top:34%;left:2%;animation-delay:-5s">
+        <div class="tile" style="--tw:clamp(70px,7.6vw,100px);transform:rotate(4deg)"><div class="tile-inner">
+          <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-red"/></svg></div>
+          <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+        </div></div>
+      </div>
+      <div class="float-tile" data-depth="28" style="top:30%;left:38%;animation-delay:-2.2s">
+        <div class="tile" style="--tw:clamp(110px,12.5vw,164px);transform:rotate(-2deg)"><div class="tile-inner">
+          <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-joker"/></svg></div>
+          <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+        </div></div>
+      </div>
+      <div class="float-tile" data-depth="16" style="top:56%;right:4%;animation-delay:-6.1s">
+        <div class="tile flipped" style="--tw:clamp(84px,9.4vw,124px);transform:rotate(10deg)"><div class="tile-inner">
+          <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-east"/></svg></div>
+          <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+        </div></div>
+      </div>
+      <div class="float-tile" data-depth="40" style="bottom:2%;left:22%;animation-delay:-4.3s">
+        <div class="tile" style="--tw:clamp(80px,9vw,118px);transform:rotate(-6deg)"><div class="tile-inner">
+          <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-3dot"/></svg></div>
+          <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+        </div></div>
+      </div>
+      <div class="float-tile" data-depth="24" style="bottom:10%;right:30%;animation-delay:-.7s">
+        <div class="tile" style="--tw:clamp(66px,7vw,94px);transform:rotate(3deg)"><div class="tile-inner">
+          <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-green"/></svg></div>
+          <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>Scroll</span><span class="line"></span></div>
+</section>
+
+<!-- ====== marquee ====== -->
+<div id="marquee" aria-hidden="true">
+  <div class="marquee-track" id="mtrack">
+    <span>Art</span><span class="diamond">◆</span><span>Friendship</span><span class="diamond">◆</span><span>Gathering</span><span class="diamond">◆</span><span>Hand-finished tiles</span><span class="diamond">◆</span><span>Painted from original brushwork</span><span class="diamond">◆</span><span>Limited first pressing</span><span class="diamond">◆</span>
+  </div>
+</div>
+
+<!-- ====== story ====== -->
+<section id="story" class="section-pad">
+  <div class="wrap story-grid">
+    <div class="story-art rv2">
+      <div class="story-frame">
+        <svg viewBox="0 0 440 330" role="img" aria-label="Ink brushwork of palm fronds, in the style of the Modern Palms collection">
+          <rect width="440" height="330" fill="#F8F3E7"/>
+          <g fill="none" stroke="#2A3B33" stroke-linecap="round">
+            <path d="M60 320 C 120 240, 160 160, 185 40" stroke-width="5"/>
+            <path d="M178 70 C 140 82, 108 108, 88 142" stroke-width="3"/>
+            <path d="M182 58 C 218 74, 246 100, 262 134" stroke-width="3"/>
+            <path d="M168 120 C 134 134, 108 158, 92 190" stroke-width="2.6"/>
+            <path d="M172 112 C 204 128, 228 152, 241 184" stroke-width="2.6"/>
+            <path d="M150 180 C 122 196, 102 218, 90 246" stroke-width="2.2"/>
+            <path d="M154 172 C 182 188, 202 210, 212 238" stroke-width="2.2"/>
+          </g>
+          <g fill="none" stroke="#41604E" stroke-linecap="round" opacity=".8">
+            <path d="M330 322 C 344 268, 352 210, 352 120" stroke-width="4"/>
+            <path d="M350 150 C 322 160, 300 178, 286 202" stroke-width="2.4"/>
+            <path d="M353 140 C 380 152, 400 172, 411 198" stroke-width="2.4"/>
+            <path d="M344 210 C 320 222, 302 240, 292 264" stroke-width="2"/>
+            <path d="M347 202 C 371 214, 388 232, 397 256" stroke-width="2"/>
+          </g>
+          <circle cx="392" cy="52" r="20" fill="#A9502F" opacity=".92"/>
+          <text x="392" y="60" text-anchor="middle" font-family="'Noto Serif TC','SimSun',serif" font-size="20" fill="#F5EFE3">聚</text>
+        </svg>
+        <p class="story-caption">after “Modern Palms” · ink &amp; watercolor on handmade paper · Nha Vuu</p>
+        <div class="story-seal" aria-hidden="true">聚</div>
+      </div>
+    </div>
+    <div class="story-copy">
+      <span class="label rv"><span class="rule"></span>Our story</span>
+      <h2 class="rv" style="transition-delay:.08s">Three friends,<br>one <em>table</em>.</h2>
+      <p class="rv" style="transition-delay:.14s">Gathered began the way every good mahjong night does: with friends around a table. Kelly, Jill, and Nha wanted tiles as beautiful as the hours spent playing them. A set worthy of being passed down, not packed away.</p>
+      <p class="rv" style="transition-delay:.2s">Every tile begins as an original work by artist <b style="font-weight:500">Nha Vuu</b>, whose contemporary eastern brushwork in pine-soot ink and watercolor lends movement to palms, blossoms, and birds. Her paintings become our engravings; her palette becomes our table.</p>
+      <p class="rv" style="transition-delay:.26s">We are a boutique house, deliberately small. We would rather make a few hundred perfect sets than ten thousand ordinary ones.</p>
+      <div class="founders rv" style="transition-delay:.32s">
+        <div class="founder"><span class="fmark">K</span><span><b>Kelly</b><small>Founder</small></span></div>
+        <div class="founder"><span class="fmark">J</span><span><b>Jill</b><small>Founder</small></span></div>
+        <div class="founder"><span class="fmark">N</span><span><b>Nha</b><small>Artist &amp; Founder</small></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== collection ====== -->
+<section id="collection" class="section-pad">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="label"><span class="rule"></span>Collection No. 001</span>
+      <h2>Modern <em>Palms</em></h2>
+      <p>Our first tile collection, drawn from Nha's Modern Palms series: fronds in ink and gold over bone-white faces, backed in deep gallery blue. These are studies of the set to come; final artwork arrives with the fall.</p>
+    </div>
+    <div class="coll-tiles" id="colltiles">
+      <div class="tile" style="--i:0"><div class="tile-inner">
+        <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-1bam"/></svg></div>
+        <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+      </div></div>
+      <div class="tile" style="--i:1"><div class="tile-inner">
+        <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-5bam"/></svg></div>
+        <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+      </div></div>
+      <div class="tile" style="--i:2"><div class="tile-inner">
+        <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-3dot"/></svg></div>
+        <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+      </div></div>
+      <div class="tile" style="--i:3"><div class="tile-inner">
+        <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-7crak"/></svg></div>
+        <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+      </div></div>
+      <div class="tile" style="--i:4"><div class="tile-inner">
+        <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-east"/></svg></div>
+        <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+      </div></div>
+      <div class="tile" style="--i:5"><div class="tile-inner">
+        <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-green"/></svg></div>
+        <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+      </div></div>
+      <div class="tile" style="--i:6"><div class="tile-inner">
+        <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-red"/></svg></div>
+        <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+      </div></div>
+      <div class="tile" style="--i:7"><div class="tile-inner">
+        <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-white"/></svg></div>
+        <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+      </div></div>
+      <div class="tile" style="--i:8"><div class="tile-inner">
+        <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-flower"/></svg></div>
+        <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+      </div></div>
+      <div class="tile" style="--i:9"><div class="tile-inner">
+        <div class="face front"><svg viewBox="0 0 110 145"><use href="#t-joker"/></svg></div>
+        <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+      </div></div>
+    </div>
+    <p class="coll-hint rv">Run your hand over the wall. <b>Hover any tile</b> to turn it</p>
+
+    <!-- featured tile viewer -->
+    <div class="viewer rv2" id="viewer">
+      <div class="viewer-stage">
+        <div class="tile noflip" id="vtile"><div class="tile-inner" id="vinner">
+          <div class="face front"><svg viewBox="0 0 110 145"><use id="vface" href="#t-1bam"/></svg></div>
+          <div class="face back"><svg viewBox="0 0 110 145"><use href="#t-back"/></svg></div>
+        </div></div>
+      </div>
+      <div class="viewer-copy">
+        <span class="label label--light"><span class="rule"></span>Study the detail</span>
+        <h3>Every suit, an <em>original painting</em></h3>
+        <p id="vdesc">The One Bam. A bird alighting on a young palm cane, brushed in indigo ink with a single stroke of gold at the beak.</p>
+        <div class="swatches" id="swatches">
+          <button class="swatch active" data-t="t-1bam" data-d="The One Bam. A bird alighting on a young palm cane, brushed in indigo ink with a single stroke of gold at the beak.">One Bam</button>
+          <button class="swatch" data-t="t-3dot" data-d="Dots as blossoms. Each circle opens like a flower, alternating indigo, clay, and palm, set on the diagonal like petals falling.">Three Dot</button>
+          <button class="swatch" data-t="t-7crak" data-d="Craks in classic calligraphy. Pine-soot black over clay red, honoring the traditional 萬 while sitting cleanly on a modern face.">Seven Crak</button>
+          <button class="swatch" data-t="t-east" data-d="The winds, restrained and architectural. A single character above a hairline of gold, easy to read across the table.">East Wind</button>
+          <button class="swatch" data-t="t-flower" data-d="The flower tiles carry the collection's soul: fronds from Nha's Modern Palms series, layered green over gold.">Flower</button>
+          <button class="swatch" data-t="t-joker" data-d="Our joker, the Gatherer. The house monogram ringed in brass and flanked by fronds. May it find you when you need it.">Joker</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== craft ====== -->
+<section id="craft" class="section-pad">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="label"><span class="rule"></span>The craft</span>
+      <h2>Deliberately <em>small</em>, obsessively made</h2>
+    </div>
+    <div class="craft-grid">
+      <div class="craft-cell rv" style="transition-delay:0s"><div class="num" data-count="166">0</div><p>Tiles in every set</p></div>
+      <div class="craft-cell rv" style="transition-delay:.1s"><div class="num"><span data-count="300">0</span>–<span data-count="500">0</span></div><p>Sets in the first pressing</p></div>
+      <div class="craft-cell rv" style="transition-delay:.2s"><div class="num" data-count="1">0</div><p>Artist behind every stroke</p></div>
+      <div class="craft-cell rv" style="transition-delay:.3s"><div class="num">∞<sup>&nbsp;</sup></div><p>Nights around the table</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== mat ====== -->
+<section id="mat" class="section-pad">
+  <div class="wrap mat-grid">
+    <div class="mat-copy">
+      <span class="label rv"><span class="rule"></span>The companion piece</span>
+      <h2 class="rv" style="transition-delay:.08s">The Gathered <em>Mat</em></h2>
+      <p class="rv" style="transition-delay:.14s">A table deserves dressing. Our launch mat is cut in the same deep gallery blue as the tile backs, edged in a fine brass keyline, with a cushioned surface that hushes the shuffle and flatters every wash.</p>
+      <p class="rv" style="transition-delay:.2s">One mat, one collection, made to live together.</p>
+      <ul class="mat-feats rv" style="transition-delay:.26s">
+        <li>Plush, low-glare playing surface in gallery blue</li>
+        <li>Rolls flat every time, with no creases and no curl</li>
+        <li>Brass keyline border echoing the tile engraving</li>
+      </ul>
+    </div>
+    <div class="mat-visual rv2">
+      <div class="mat-surface">
+        <span class="mat-monogram">Gathered</span>
+        <div class="mat-tiles" id="mattiles" aria-hidden="true">
+          <i class="mini"></i><i class="mini"></i><i class="mini"></i><i class="mini"></i><i class="mini"></i><i class="mini"></i><i class="mini"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== waitlist ====== -->
+<section id="waitlist" class="section-pad">
+  <div class="wl-float" style="width:90px;height:118px;top:12%;left:7%;--r:-10deg"></div>
+  <div class="wl-float" style="width:64px;height:84px;top:64%;left:14%;--r:14deg;animation-delay:-6s"></div>
+  <div class="wl-float" style="width:110px;height:144px;top:18%;right:6%;--r:9deg;animation-delay:-3s"></div>
+  <div class="wl-float" style="width:70px;height:92px;bottom:10%;right:15%;--r:-13deg;animation-delay:-9s"></div>
+  <div class="wrap inner">
+    <span class="label label--light rv"><span class="rule"></span>First pressing · VIP list</span>
+    <h2 class="rv" style="transition-delay:.08s">Be seated <em>first</em>.</h2>
+    <p class="sub rv" style="transition-delay:.14s">The first run of Collection No. 001 will be small: a few hundred sets, no more. The VIP waitlist gets early access to preorder before doors open to anyone else. No noise, just first seats.</p>
+    <form class="wl-form rv" id="wlform" style="transition-delay:.2s">
+      <input type="email" id="wlemail" name="email" placeholder="Your email address" required autocomplete="email" aria-label="Email address">
+      <button class="btn-gold" type="submit">Take my seat</button>
+    </form>
+    <p class="wl-success" id="wlsuccess">Your seat is saved. Watch your inbox. 聚</p>
+    <div class="wl-perks rv" style="transition-delay:.26s">
+      <span class="wl-perk"><svg viewBox="0 0 24 24" fill="none" stroke="#C6A15B" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Early preorder access</span>
+      <span class="wl-perk"><svg viewBox="0 0 24 24" fill="none" stroke="#C6A15B" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Behind-the-brush studio notes</span>
+      <span class="wl-perk"><svg viewBox="0 0 24 24" fill="none" stroke="#C6A15B" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>First look at the artwork</span>
+    </div>
+    <p class="wl-fine rv" style="transition-delay:.3s">We write rarely and never share your address.</p>
+  </div>
+</section>
+
+<!-- ====== footer ====== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <span class="logo-type">Gathered <em style="color:var(--brass)">Mahjong</em></span>
+        <p>A boutique mahjong house inspired by art, friendship, and the simple luxury of gathering.</p>
+      </div>
+      <div>
+        <h4>Follow along</h4>
+        <ul>
+          <li><a href="https://www.instagram.com/gathered_mahjong" target="_blank" rel="noopener">Instagram · @gathered_mahjong</a></li>
+          <li><a href="https://www.facebook.com/gatheredmahjong" target="_blank" rel="noopener">Facebook</a></li>
+          <li><a href="mailto:info@gatheredmahjong.com">info@gatheredmahjong.com</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>The house</h4>
+        <ul>
+          <li><a href="#story">Our story</a></li>
+          <li><a href="#collection">Collection No. 001</a></li>
+          <li><a href="#mat">The mat</a></li>
+          <li><a href="#waitlist">VIP waitlist</a></li>
+          <li><a href="studio.html" style="color:var(--brass)">Founders' studio ↗</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© <span id="yr">2026</span> Gathered Mahjong. Made with friends.</span>
+      <span class="foot-tiles" aria-hidden="true"><i></i><i></i><i></i></span>
+    </div>
+  </div>
+</footer>
+<script>
+/* =========================================================
+   GATHERED MAHJONG :: interactions
+   ---------------------------------------------------------
+   The VIP waitlist posts straight to the Gathered backend
+   (Supabase, table gm_waitlist). Founders can view signups
+   from the studio. If the request ever fails, the form falls
+   back to email so no signup is lost.
+   ========================================================= */
+const WAITLIST_URL = "https://oskadlvzfwrhhtglrtvu.supabase.co/rest/v1/gm_waitlist";
+const WAITLIST_KEY = "sb_publishable_E6JjN7M6Qwp5N3u9D3YblA_4avSt7uh";
+
+/* ---------- preloader ---------- */
+window.addEventListener("load", () => {
+  setTimeout(() => document.getElementById("loader").classList.add("done"), 900);
+});
+/* safety: never trap the page behind the loader */
+setTimeout(() => document.getElementById("loader").classList.add("done"), 3500);
+
+/* ---------- header on scroll ---------- */
+const header = document.querySelector("header");
+addEventListener("scroll", () => {
+  header.classList.toggle("scrolled", scrollY > 40);
+}, { passive: true });
+
+/* ---------- mobile nav ---------- */
+const burger = document.getElementById("burger");
+const navlinks = document.getElementById("navlinks");
+burger.addEventListener("click", () => {
+  burger.classList.toggle("open");
+  navlinks.classList.toggle("open");
+});
+navlinks.querySelectorAll("a").forEach(a => a.addEventListener("click", () => {
+  burger.classList.remove("open"); navlinks.classList.remove("open");
+}));
+
+/* ---------- scroll reveals ---------- */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("on"); io.unobserve(e.target); } });
+}, { threshold: .18 });
+document.querySelectorAll(".rv,.rv2").forEach(el => io.observe(el));
+
+/* collection wall cascade */
+const wall = document.getElementById("colltiles");
+new IntersectionObserver((es, o) => {
+  es.forEach(e => { if (e.isIntersecting) { wall.classList.add("on"); o.disconnect(); } });
+}, { threshold: .25 }).observe(wall);
+
+/* ---------- hero parallax ---------- */
+const tableau = document.getElementById("tableau");
+const floats = [...document.querySelectorAll(".float-tile")];
+if (matchMedia("(pointer:fine)").matches) {
+  addEventListener("mousemove", e => {
+    const x = e.clientX / innerWidth - .5, y = e.clientY / innerHeight - .5;
+    floats.forEach(f => {
+      const d = +f.dataset.depth;
+      f.style.translate = `${-x * d}px ${-y * d * .7}px`;
+    });
+  }, { passive: true });
+}
+
+/* hero tiles: slow ambient flipping, one at a time */
+(function ambientFlip(){
+  const t = floats[Math.floor(Math.random() * floats.length)].querySelector(".tile");
+  t.classList.toggle("flipped");
+  setTimeout(ambientFlip, 2600 + Math.random() * 2200);
+})();
+
+/* ---------- frond line drawing ---------- */
+document.querySelectorAll("#frond-bg .draw").forEach(p => {
+  const len = p.getTotalLength();
+  p.style.strokeDasharray = len;
+  p.style.strokeDashoffset = len;
+  p.style.transition = "stroke-dashoffset 3.2s cubic-bezier(.22,.9,.28,1) .6s";
+  requestAnimationFrame(() => requestAnimationFrame(() => { p.style.strokeDashoffset = "0"; }));
+});
+
+/* ---------- craft counters ---------- */
+const counters = document.querySelectorAll("[data-count]");
+(() => {
+  const co = new IntersectionObserver((es, o) => {
+    es.forEach(e => {
+      if (!e.isIntersecting) return;
+      o.unobserve(e.target);
+      const el = e.target, target = +el.dataset.count, dur = 1400, t0 = performance.now();
+      (function tick(t){
+        const p = Math.min((t - t0) / dur, 1), ease = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(target * ease);
+        if (p < 1) requestAnimationFrame(tick);
+      })(t0);
+    });
+  }, { threshold: .6 });
+  counters.forEach(c => co.observe(c));
+})();
+
+/* ---------- featured tile viewer ---------- */
+const vface = document.getElementById("vface");
+const vdesc = document.getElementById("vdesc");
+const vtile = document.getElementById("vtile");
+const vinner = document.getElementById("vinner");
+document.getElementById("swatches").addEventListener("click", e => {
+  const b = e.target.closest(".swatch");
+  if (!b) return;
+  document.querySelectorAll(".swatch").forEach(s => s.classList.remove("active"));
+  b.classList.add("active");
+  /* flip out, swap art mid-turn, flip back */
+  vinner.style.transition = "transform .5s cubic-bezier(.6,0,.4,1)";
+  vinner.style.transform = "rotateY(90deg)";
+  setTimeout(() => {
+    vface.setAttribute("href", "#" + b.dataset.t);
+    vdesc.style.opacity = 0;
+    setTimeout(() => { vdesc.textContent = b.dataset.d; vdesc.style.opacity = 1; }, 80);
+    vinner.style.transform = "rotateY(0deg)";
+  }, 500);
+});
+vdesc.style.transition = "opacity .4s";
+
+/* viewer 3D tilt on mouse */
+const stage = vtile.parentElement;
+stage.addEventListener("mousemove", e => {
+  const r = vtile.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width - .5;
+  const y = (e.clientY - r.top) / r.height - .5;
+  if (vinner.style.transform.includes("90deg")) return;
+  vinner.style.transition = "transform .18s linear";
+  vinner.style.transform = `rotateY(${x * 26}deg) rotateX(${-y * 22}deg)`;
+});
+stage.addEventListener("mouseleave", () => {
+  vinner.style.transition = "transform .9s cubic-bezier(.22,.9,.28,1)";
+  vinner.style.transform = "rotateY(0) rotateX(0)";
+});
+
+/* ---------- mat mini-tiles rise on view ---------- */
+const minis = document.querySelectorAll(".mat-tiles .mini");
+minis.forEach((m, i) => { m.style.animationDelay = (i * .1 + .3) + "s"; m.style.animationPlayState = "paused"; });
+new IntersectionObserver((es, o) => {
+  es.forEach(e => { if (e.isIntersecting) { minis.forEach(m => m.style.animationPlayState = "running"); o.disconnect(); } });
+}, { threshold: .4 }).observe(document.getElementById("mattiles"));
+
+/* ---------- waitlist form ---------- */
+document.getElementById("wlform").addEventListener("submit", async e => {
+  e.preventDefault();
+  const form = e.currentTarget;
+  const email = document.getElementById("wlemail").value.trim();
+  if (!email) return;
+  const success = () => {
+    form.style.display = "none";
+    document.getElementById("wlsuccess").style.display = "block";
+  };
+  try {
+    const res = await fetch(WAITLIST_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": WAITLIST_KEY,
+        "Authorization": "Bearer " + WAITLIST_KEY,
+        "Prefer": "return=minimal"
+      },
+      body: JSON.stringify({ email, source: "site" })
+    });
+    /* 201 = added, 409 = already on the list; both are a win */
+    if (res.ok || res.status === 409) { success(); return; }
+    throw new Error("waitlist " + res.status);
+  } catch (err) {
+    /* backend unreachable: fall back to email so no signup is lost */
+    location.href = "mailto:info@gatheredmahjong.com?subject=" +
+      encodeURIComponent("VIP Waitlist: please add me") +
+      "&body=" + encodeURIComponent(`Please add ${email} to the Gathered Mahjong VIP waitlist.`);
+    success();
+  }
+});
+
+/* ---------- footer year ---------- */
+document.getElementById("yr").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
