@@ -703,7 +703,10 @@ $("#gate-form").addEventListener("submit", async e => {
   $("#auth-btn").disabled = true;
   try {
     if (authMode === "signup"){
-      const { data, error } = await sb.auth.signUp({ email, password });
+      const { data, error } = await sb.auth.signUp({
+        email, password,
+        options: { emailRedirectTo: "https://www.gatheredmahjong.com/studio.html" }
+      });
       if (error) throw error;
       if (data.session) await enterStudio(data.session.user);
       else { msg.className = "gate-msg ok"; msg.textContent = "Check your inbox to confirm your email, then sign in."; }

@@ -164,8 +164,15 @@ nav.links a.cta:focus-visible,.btn:focus-visible{border-radius:100px}
 }
 .hero-copy h1 em{font-style:italic;color:var(--indigo)}
 .hero-copy h1 .gold{color:var(--brass-deep)}
+.hero-sub{
+  margin-top:28px;font-family:var(--serif);font-style:italic;
+  font-size:1.22rem;color:var(--brass-deep);letter-spacing:.01em;
+}
 .hero-copy p.lede{
-  margin:30px 0 40px;font-size:1.06rem;max-width:44ch;color:#4c4a42;
+  margin:14px 0 0;font-size:1.06rem;max-width:44ch;color:#4c4a42;
+}
+.hero-copy p.lede-more{
+  margin:16px 0 40px;font-size:.92rem;max-width:52ch;color:#54524a;
 }
 .hero-ctas{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
 .btn{
@@ -283,6 +290,8 @@ section{position:relative}
 .story-copy h2{font-size:clamp(2rem,3.8vw,3rem);font-weight:300;margin-bottom:26px}
 .story-copy h2 em{font-style:italic;color:var(--brass-deep)}
 .story-copy p{margin-bottom:18px;color:#4c4a42}
+.story-copy p.story-lead{font-family:var(--serif);font-size:1.3rem;color:var(--ink);line-height:1.4}
+.story-copy p.story-close{font-family:var(--serif);font-style:italic;font-size:1.08rem;color:var(--brass-deep)}
 .founders{display:flex;gap:34px;margin-top:38px;flex-wrap:wrap}
 .founder{display:flex;align-items:center;gap:13px}
 .founder .fmark{
@@ -673,7 +682,9 @@ footer ul a:hover{color:var(--brass)}
     <div class="hero-copy">
       <span class="label rv"><span class="rule"></span>A boutique mahjong house</span>
       <h1 class="rv" style="transition-delay:.08s">The art of<br><em>gathering</em>,<br><span class="gold">tile by tile.</span></h1>
-      <p class="lede rv" style="transition-delay:.16s">Born of three friends and the brush of artist Nha Vuu. Heirloom mahjong sets where contemporary eastern brushwork meets the ritual of the table. Collection No.&nbsp;001 arrives soon, in a first run of only a few hundred sets.</p>
+      <p class="hero-sub rv" style="transition-delay:.14s">Original Tile Artwork Coming Soon</p>
+      <p class="lede rv" style="transition-delay:.18s">Our inaugural collection is currently being created by artist Nha Vuu.</p>
+      <p class="lede lede-more rv" style="transition-delay:.22s">Nha's work is deeply influenced by traditional Chinese brush painting, years of study in Taiwan, and a lifelong appreciation for nature and thoughtful design. Each Gathered Mahjong collection begins as original artwork before being transformed into a one-of-a-kind playing experience.</p>
       <div class="hero-ctas rv" style="transition-delay:.24s">
         <a class="btn btn-primary" href="#waitlist">Join the VIP Waitlist</a>
         <a class="btn btn-ghost" href="#story">Our Story</a>
@@ -768,9 +779,9 @@ footer ul a:hover{color:var(--brass)}
     <div class="story-copy">
       <span class="label rv"><span class="rule"></span>Our story</span>
       <h2 class="rv" style="transition-delay:.08s">Three friends,<br>one <em>table</em>.</h2>
-      <p class="rv" style="transition-delay:.14s">Gathered began the way every good mahjong night does: with friends around a table. Kelly, Jill, and Nha wanted tiles as beautiful as the hours spent playing them. A set worthy of being passed down, not packed away.</p>
-      <p class="rv" style="transition-delay:.2s">Every tile begins as an original work by artist <b style="font-weight:500">Nha Vuu</b>, whose contemporary eastern brushwork in pine-soot ink and watercolor lends movement to palms, blossoms, and birds. Her paintings become our engravings; her palette becomes our table.</p>
-      <p class="rv" style="transition-delay:.26s">We are a boutique house, deliberately small. We would rather make a few hundred perfect sets than ten thousand ordinary ones.</p>
+      <p class="story-lead rv" style="transition-delay:.14s">Gathered was born around a mahjong table.</p>
+      <p class="rv" style="transition-delay:.2s">Three friends with a shared vision: to create beautiful mahjong sets inspired by original artwork and the moments that bring people together.</p>
+      <p class="story-close rv" style="transition-delay:.26s">Because the best memories aren't just made during the game; they're made around it.</p>
       <div class="founders rv" style="transition-delay:.32s">
         <div class="founder"><span class="fmark">K</span><span><b>Kelly</b><small>Founder</small></span></div>
         <div class="founder"><span class="fmark">J</span><span><b>Jill</b><small>Founder</small></span></div>
