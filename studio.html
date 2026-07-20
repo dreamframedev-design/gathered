@@ -189,7 +189,7 @@ svg{display:block}
     radial-gradient(60% 80% at 50% 30%,rgba(35,56,107,.55) 0%,transparent 70%);
   perspective:1300px;min-width:0;
 }
-#lab-stage .hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:#3E4761;white-space:nowrap}
+#lab-stage .hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:min(92%,560px);text-align:center;font-size:.64rem;letter-spacing:.22em;text-transform:uppercase;color:#3E4761;line-height:1.6}
 #lab-tile{width:min(340px,44vw);aspect-ratio:11/14.5;position:relative;transform-style:preserve-3d;transition:transform .8s var(--ease)}
 #lab-tile .face{
   position:absolute;inset:0;border-radius:12%/9%;backface-visibility:hidden;overflow:hidden;
@@ -206,25 +206,32 @@ svg{display:block}
 #lab-front [data-part]{cursor:pointer;pointer-events:bounding-box}
 #lab-front [data-part]:hover{filter:drop-shadow(0 0 2px rgba(198,161,91,.55))}
 #lab-front [data-part].sel{filter:drop-shadow(0 0 3px rgba(198,161,91,.95))}
-#part-hud{
-  position:absolute;top:16px;right:16px;width:232px;z-index:6;
-  background:rgba(11,24,52,.94);backdrop-filter:blur(12px);
-  border:1px solid var(--line2);border-radius:14px;padding:14px;
-  display:grid;gap:10px;box-shadow:0 18px 50px rgba(0,0,0,.5);
+/* ---- layers panel ---- */
+.add-row{display:flex;gap:6px}
+.add-row button{
+  flex:1;height:30px;border:1px solid var(--line2);border-radius:8px;background:none;color:#B9C0D2;
+  cursor:pointer;font-size:.85rem;line-height:1;transition:color .2s,border-color .2s;
 }
-#part-hud[hidden]{display:none}
-.hud-head{display:flex;gap:8px;align-items:center}
-#hud-part{
-  flex:1;min-width:0;background:var(--indigo-deep);border:1px solid var(--line2);color:var(--ivory);
-  border-radius:8px;padding:7px 8px;font-size:.78rem;outline:none;
+.add-row button:hover{color:var(--brass);border-color:var(--brass)}
+#layer-list{list-style:none;display:grid;gap:4px;max-height:236px;overflow-y:auto}
+#layer-list li{
+  display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;cursor:pointer;
+  font-size:.78rem;color:#B9C0D2;border:1px solid transparent;transition:background .2s,border-color .2s;
 }
-#hud-part:focus{border-color:var(--brass)}
-#hud-close{
-  flex:none;width:26px;height:26px;border-radius:50%;border:1px solid var(--line2);
-  background:none;color:#8E97AC;cursor:pointer;font-size:.95rem;line-height:1;
-  display:flex;align-items:center;justify-content:center;transition:color .3s,border-color .3s;
-}
-#hud-close:hover{color:var(--brass);border-color:var(--brass)}
+#layer-list li:hover{background:rgba(251,247,238,.05)}
+#layer-list li.sel{background:rgba(198,161,91,.1);border-color:rgba(198,161,91,.45);color:var(--ivory)}
+#layer-list li.hid .lname{opacity:.45}
+#layer-list .eye{flex:none;width:20px;height:20px;border:none;background:none;color:#8E97AC;cursor:pointer;font-size:.8rem;line-height:1;padding:0}
+#layer-list .eye:hover{color:var(--brass)}
+#layer-list .lname{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#layer-list .ldot{flex:none;width:10px;height:10px;border-radius:50%;border:1px solid rgba(251,247,238,.25)}
+#layer-list .mv{flex:none;width:18px;height:18px;border:none;background:none;color:#5E6880;cursor:pointer;font-size:.66rem;padding:0}
+#layer-list .mv:hover{color:var(--brass)}
+#layer-ctls{display:grid;gap:10px;padding:12px;border:1px solid rgba(198,161,91,.35);border-radius:10px;background:rgba(198,161,91,.05)}
+#layer-ctls[hidden]{display:none}
+#lay-text{background:var(--indigo-deep);border:1px solid var(--line2);color:var(--ivory);border-radius:8px;padding:7px 10px;font-size:.8rem;outline:none;flex:1;min-width:0}
+#lay-text:focus{border-color:var(--brass)}
+.lay-btns{display:flex;gap:8px}
 .hud-row{display:flex;gap:8px}
 .hud-mini{
   flex:1;background:none;border:1px solid var(--line2);color:#B9C0D2;border-radius:8px;
@@ -249,12 +256,12 @@ img.art{object-fit:contain;pointer-events:none}
 .ctl-group{display:grid;gap:12px}
 .ctl-group>.label{color:#5E6880;padding-bottom:2px;border-bottom:1px solid var(--line2)}
 .ctl{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.ctl label{font-size:.8rem;color:#B9C0D2;flex:1}
+.ctl label{font-size:.78rem;color:#B9C0D2;flex:none;width:72px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ctl input[type=color]{
   width:36px;height:28px;border:1px solid var(--line2);border-radius:7px;background:none;padding:2px;cursor:pointer;
 }
 .ctl input[type=range]{flex:1.4;accent-color:var(--brass);height:3px}
-.ctl output{font-size:.7rem;color:#5E6880;width:36px;text-align:right}
+.ctl output{font-size:.7rem;color:#5E6880;width:32px;flex:none;text-align:right;font-variant-numeric:tabular-nums}
 .ctl select{
   background:var(--indigo-deep);border:1px solid var(--line2);color:var(--ivory);border-radius:8px;
   padding:7px 10px;font-size:.8rem;outline:none;flex:1.4;
@@ -449,24 +456,33 @@ img.art{object-fit:contain;pointer-events:none}
             <div class="face front" id="lab-front"></div>
             <div class="face back" id="lab-back"></div>
           </div>
-          <div id="part-hud" hidden>
-            <div class="hud-head">
-              <select id="hud-part" aria-label="Tile element"></select>
-              <button id="hud-close" title="Done editing" aria-label="Close element editor">&times;</button>
-            </div>
-            <div class="ctl"><label>Across</label><input type="range" id="hud-x" min="-55" max="55" value="0"><output>0</output></div>
-            <div class="ctl"><label>Up / down</label><input type="range" id="hud-y" min="-70" max="70" value="0"><output>0</output></div>
-            <div class="ctl"><label>Size</label><input type="range" id="hud-s" min="40" max="200" value="100"><output>100</output></div>
-            <div class="ctl"><label>Rotate</label><input type="range" id="hud-r" min="-90" max="90" value="0"><output>0</output></div>
-            <div class="ctl"><label>Ink</label><input type="color" id="hud-c"><button class="hud-mini" id="hud-c-auto" title="Back to the suit ink">auto</button></div>
-            <div class="hud-row">
-              <button class="hud-mini" id="hud-hide">Hide</button>
-              <button class="hud-mini" id="hud-reset">Reset element</button>
-            </div>
-          </div>
           <p class="hint">Move to tilt · Click to flip</p>
         </div>
         <div id="rail" class="scroll">
+          <div class="ctl-group">
+            <span class="label">Layers · <span id="layers-face">this face</span></span>
+            <div class="add-row" id="add-row">
+              <button data-add="circle" title="Add a circle">&#9679;</button>
+              <button data-add="rect" title="Add a rectangle">&#9645;</button>
+              <button data-add="line" title="Add a line">&#8212;</button>
+              <button data-add="frond" title="Add a frond">&#10022;</button>
+              <button data-add="text" title="Add words">T</button>
+            </div>
+            <ul id="layer-list"></ul>
+            <div id="layer-ctls" hidden>
+              <div class="ctl"><label>Across</label><input type="range" id="lay-x" min="-55" max="55" value="0"><output>0</output></div>
+              <div class="ctl"><label>Down</label><input type="range" id="lay-y" min="-70" max="70" value="0"><output>0</output></div>
+              <div class="ctl"><label>Size</label><input type="range" id="lay-s" min="20" max="260" value="100"><output>100</output></div>
+              <div class="ctl"><label>Rotate</label><input type="range" id="lay-r" min="-180" max="180" value="0"><output>0</output></div>
+              <div class="ctl"><label>Ink</label><input type="color" id="lay-c"><button class="hud-mini" id="lay-c-auto" style="flex:none;width:60px" title="Back to the suit ink">auto</button></div>
+              <div class="ctl" id="lay-text-row" hidden><label>Words</label><input type="text" id="lay-text" maxlength="24"></div>
+              <div class="lay-btns">
+                <button class="hud-mini" id="lay-reset">Reset</button>
+                <button class="hud-mini" id="lay-delete" hidden>Delete</button>
+                <button class="hud-mini" id="lay-done">Done</button>
+              </div>
+            </div>
+          </div>
           <div class="ctl-group">
             <span class="label">Colorways</span>
             <div class="preset-row" id="presets"></div>
@@ -482,8 +498,8 @@ img.art{object-fit:contain;pointer-events:none}
           </div>
           <div class="ctl-group">
             <span class="label">Geometry</span>
-            <div class="ctl"><label>Corner radius</label><input type="range" data-geo="radius" min="4" max="20" value="12"><output>12</output></div>
-            <div class="ctl"><label>Engraving depth</label><input type="range" data-geo="depth" min="0" max="100" value="45"><output>45</output></div>
+            <div class="ctl"><label>Corners</label><input type="range" data-geo="radius" min="4" max="20" value="12"><output>12</output></div>
+            <div class="ctl"><label>Engraving</label><input type="range" data-geo="depth" min="0" max="100" value="45"><output>45</output></div>
           </div>
           <div class="ctl-group">
             <span class="label">The Mat</span>
@@ -508,8 +524,8 @@ img.art{object-fit:contain;pointer-events:none}
             </div>
             <p class="mini-note" style="color:var(--brass)">Tip: drag the painting on the big tile to place it, and scroll over it to size it.</p>
             <div class="ctl"><label>Size</label><input type="range" data-art="scale" min="20" max="200" value="100"><output>100</output></div>
-            <div class="ctl"><label>Left / right</label><input type="range" data-art="x" min="-50" max="50" value="0"><output>0</output></div>
-            <div class="ctl"><label>Up / down</label><input type="range" data-art="y" min="-50" max="50" value="0"><output>0</output></div>
+            <div class="ctl"><label>Across</label><input type="range" data-art="x" min="-50" max="50" value="0"><output>0</output></div>
+            <div class="ctl"><label>Down</label><input type="range" data-art="y" min="-50" max="50" value="0"><output>0</output></div>
             <div class="ctl"><label>Rotate</label><input type="range" data-art="rot" min="-45" max="45" value="0"><output>0</output></div>
             <div class="ctl"><label>Opacity</label><input type="range" data-art="opacity" min="10" max="100" value="100"><output>100</output></div>
             <div class="ctl"><label>Hide engraving</label><select data-art="solo"><option value="no">No, layer over it</option><option value="yes">Yes, artwork only</option></select></div>
@@ -604,7 +620,8 @@ const DEFAULT_SPEC = () => ({
   geo: { radius:12, depth:45 },
   mat: { color:"#14264E", keyline:"#C6A15B", mono:"Gathered", showMono:"yes" },
   faces: {},  /* per-face artwork: {assetId, path, scale, x, y, rot, opacity, solo} */
-  parts: {}   /* per-face engraving overrides: {faceKey:{partId:{x,y,s,r,color,hidden}}} */
+  parts: {},  /* per-face engraving overrides: {faceKey:{partId:{x,y,s,r,color,hidden}}} */
+  shapes: {}  /* per-face user-drawn elements: {faceKey:[{id,type,text?}]} */
 });
 
 /* face catalogue */
@@ -724,7 +741,21 @@ function facePartList(key, P){
     add("frondR","Right frond",61,106,P.green, c => `<g stroke="${c}" fill="none" stroke-linecap="round" transform="translate(49.6,86) scale(.3)"><path stroke-width="2.6" d="${FROND}"/></g>`);
     add("label","JOKER label",55,133,P.accent, c => `<text x="56.6" y="136.5" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-size="9.5" letter-spacing="3.2" fill="${c}">JOKER</text>`);
   }
+  /* user-drawn elements stack on top, newest last (frontmost) */
+  const SHAPE_LABEL = { circle:"Circle", rect:"Rectangle", line:"Line", frond:"Frond", text:"Words" };
+  ((state.spec.shapes||{})[key] || []).forEach(sh =>
+    add(sh.id, SHAPE_LABEL[sh.type] || "Shape", 55, 72, P.accent, c => shapeSVG(sh, c)));
   return L;
+}
+function shapeSVG(sh, c){
+  switch (sh.type){
+    case "circle": return `<circle cx="55" cy="72" r="14" fill="none" stroke="${c}" stroke-width="2"/>`;
+    case "rect":   return `<rect x="40" y="58" width="30" height="28" rx="3" fill="none" stroke="${c}" stroke-width="2"/>`;
+    case "line":   return `<path d="M40 72 H 70" stroke="${c}" stroke-width="2" stroke-linecap="round"/>`;
+    case "frond":  return `<g stroke="${c}" fill="none" stroke-linecap="round" transform="translate(44,52) scale(.28)"><path stroke-width="2.4" d="${FROND}"/></g>`;
+    case "text":   return `<text x="55" y="76" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="14" fill="${c}">${esc(sh.text || "words")}</text>`;
+    default: return "";
+  }
 }
 /* older specs grouped these elements; spread their overrides onto the new atomic parts */
 function migrateParts(parts){
@@ -936,7 +967,7 @@ async function loadVersion(vid, opts={}){
 }
 function normalizeSpec(s){
   const d = DEFAULT_SPEC();
-  return { pal:{...d.pal, ...(s?.pal||{})}, geo:{...d.geo, ...(s?.geo||{})}, mat:{...d.mat, ...(s?.mat||{})}, faces:{...(s?.faces||{})}, parts:migrateParts({...(s?.parts||{})}) };
+  return { pal:{...d.pal, ...(s?.pal||{})}, geo:{...d.geo, ...(s?.geo||{})}, mat:{...d.mat, ...(s?.mat||{})}, faces:{...(s?.faces||{})}, parts:migrateParts({...(s?.parts||{})}), shapes:{...(s?.shapes||{})} };
 }
 async function saveVersion(){
   if (!state.design) return;
@@ -1169,14 +1200,12 @@ function renderLab(){
   });
   labHint();
   /* keep the element selection alive across rerenders */
+  if (state.partSel && !facePartList(state.face, P).some(p => p.id === state.partSel)) state.partSel = null;
   if (state.partSel){
-    if (!facePartList(state.face, P).some(p => p.id === state.partSel)) deselectPart();
-    else {
-      const el = document.querySelector(`#lab-front [data-part="${state.partSel}"]`);
-      if (el) el.classList.add("sel");
-      syncHud();
-    }
+    const el = document.querySelector(`#lab-front [data-part="${state.partSel}"]`);
+    if (el) el.classList.add("sel");
   }
+  renderLayers();
 }
 /* Subtle tilt, applied directly per frame with NO transition: the tile is
    static the instant the mouse rests, so the GPU re-rasterizes it crisp.
@@ -1259,7 +1288,7 @@ labTile.addEventListener("pointermove", e => {
     const el = $(`#lab-front [data-part="${state.partSel}"]`);
     const def = partsFor().find(p => p.id === state.partSel);
     if (el && def) el.setAttribute("transform", partTransform(def, o));
-    const hx = $("#hud-x"), hy = $("#hud-y");
+    const hx = $("#lay-x"), hy = $("#lay-y");
     hx.value = o.x; hx.nextElementSibling.textContent = o.x;
     hy.value = o.y; hy.nextElementSibling.textContent = o.y;
     markDirty();
@@ -1287,47 +1316,92 @@ labTile.addEventListener("pointerup", () => {
 });
 labTile.addEventListener("pointercancel", () => { artDrag = null; partDrag = null; });
 
-/* ----- element editor HUD ----- */
-const hud = $("#part-hud");
+/* ----- layers panel: the element editor lives in the rail ----- */
 function partsFor(){ return facePartList(state.face, state.spec.pal); }
-function partOv(create){
+const shapesFor = () => (state.spec.shapes||{})[state.face] || [];
+function bagFor(id, create){
   const sp = state.spec;
   if (!sp.parts) sp.parts = {};
   if (!sp.parts[state.face]) sp.parts[state.face] = {};
   const bag = sp.parts[state.face];
-  if (!bag[state.partSel] && create) bag[state.partSel] = {};
-  return bag[state.partSel] || {};
+  if (!bag[id] && create) bag[id] = {};
+  return bag[id] || {};
 }
+function partOv(create){ return bagFor(state.partSel, create); }
 function selectPart(id){
   state.partSel = id;
   /* editing surface comes to rest */
   labTile.style.transition = "transform .5s cubic-bezier(.22,.9,.28,1)";
   labTile.style.transform = "";
   $$("#lab-front [data-part]").forEach(el => el.classList.toggle("sel", el.dataset.part === id));
-  syncHud();
+  renderLayers();
 }
 function deselectPart(){
   state.partSel = null;
   $$("#lab-front [data-part].sel").forEach(el => el.classList.remove("sel"));
-  hud.hidden = true;
+  renderLayers();
 }
-function syncHud(){
-  if (!state.partSel){ hud.hidden = true; return; }
+function renderLayers(){
+  $("#layers-face").textContent = faceByKey(state.face)?.label || "this face";
   const defs = partsFor();
-  const def = defs.find(p => p.id === state.partSel);
-  if (!def){ deselectPart(); return; }
-  $("#hud-part").innerHTML = defs.map(p =>
-    `<option value="${p.id}"${p.id===state.partSel?" selected":""}>${p.label}</option>`).join("");
+  const ov = (state.spec.parts||{})[state.face] || {};
+  const shapeIds = new Set(shapesFor().map(s => s.id));
+  $("#layer-list").innerHTML = [...defs].reverse().map(p => {
+    const o = ov[p.id] || {};
+    const hidden = o.hidden === "yes";
+    const col = o.color || p.color || state.spec.pal.ink;
+    return `<li data-part="${p.id}" class="${p.id===state.partSel?"sel":""}${hidden?" hid":""}">
+      <button class="eye" title="${hidden?"Show":"Hide"}" aria-label="${hidden?"Show":"Hide"} ${p.label}">${hidden?"&#9676;":"&#9673;"}</button>
+      <span class="lname">${p.label}</span>
+      ${shapeIds.has(p.id)?`<button class="mv" data-dir="up" title="Bring forward">&#9650;</button><button class="mv" data-dir="down" title="Send back">&#9660;</button>`:""}
+      <span class="ldot" style="background:${col}"></span>
+    </li>`;
+  }).join("");
+  syncSel();
+}
+function syncSel(){
+  const box = $("#layer-ctls");
+  if (!state.partSel){ box.hidden = true; return; }
+  const def = partsFor().find(p => p.id === state.partSel);
+  if (!def){ state.partSel = null; box.hidden = true; return; }
   const o = partOv(false);
   const set = (sel,v) => { const el = $(sel); el.value = v; if (el.nextElementSibling) el.nextElementSibling.textContent = v; };
-  set("#hud-x", o.x||0); set("#hud-y", o.y||0); set("#hud-s", o.s||100); set("#hud-r", o.r||0);
-  $("#hud-c").value = o.color || def.color || state.spec.pal.ink;
-  const hideBtn = $("#hud-hide");
-  hideBtn.classList.toggle("on", o.hidden === "yes");
-  hideBtn.textContent = o.hidden === "yes" ? "Show" : "Hide";
-  hud.hidden = false;
+  set("#lay-x", o.x||0); set("#lay-y", o.y||0); set("#lay-s", o.s||100); set("#lay-r", o.r||0);
+  $("#lay-c").value = o.color || def.color || state.spec.pal.ink;
+  const sh = shapesFor().find(s => s.id === state.partSel);
+  $("#lay-delete").hidden = !sh;
+  $("#lay-text-row").hidden = !(sh && sh.type === "text");
+  if (sh && sh.type === "text" && document.activeElement !== $("#lay-text")) $("#lay-text").value = sh.text || "";
+  box.hidden = false;
 }
-[["#hud-x","x"],["#hud-y","y"],["#hud-s","s"],["#hud-r","r"]].forEach(([sel,prop]) => {
+$("#layer-list").addEventListener("click", e => {
+  const li = e.target.closest("li[data-part]"); if (!li) return;
+  const id = li.dataset.part;
+  if (e.target.closest(".eye")){
+    const bag = bagFor(id, true);
+    bag.hidden = bag.hidden === "yes" ? "no" : "yes";
+    markDirty(); renderLab(); return;
+  }
+  const mv = e.target.closest(".mv");
+  if (mv){
+    const arr = shapesFor(); const i = arr.findIndex(s => s.id === id);
+    const j = mv.dataset.dir === "up" ? i+1 : i-1;
+    if (i >= 0 && j >= 0 && j < arr.length){ [arr[i],arr[j]] = [arr[j],arr[i]]; markDirty(); renderLab(); }
+    return;
+  }
+  selectPart(id);
+});
+$("#add-row").addEventListener("click", e => {
+  const b = e.target.closest("[data-add]"); if (!b) return;
+  const sp = state.spec;
+  if (!sp.shapes) sp.shapes = {};
+  const arr = sp.shapes[state.face] || (sp.shapes[state.face] = []);
+  const sh = { id: "u" + Date.now().toString(36) + arr.length, type: b.dataset.add };
+  if (sh.type === "text") sh.text = "gathered";
+  arr.push(sh);
+  markDirty(); renderLab(); selectPart(sh.id);
+});
+[["#lay-x","x"],["#lay-y","y"],["#lay-s","s"],["#lay-r","r"]].forEach(([sel,prop]) => {
   $(sel).addEventListener("input", e => {
     if (!state.partSel) return;
     partOv(true)[prop] = +e.target.value;
@@ -1335,31 +1409,40 @@ function syncHud(){
     markDirty(); renderLab();
   });
 });
-$("#hud-c").addEventListener("input", e => {
+$("#lay-c").addEventListener("input", e => {
   if (!state.partSel) return;
   partOv(true).color = e.target.value;
   markDirty(); renderLab();
 });
-$("#hud-c-auto").addEventListener("click", () => {
+$("#lay-c-auto").addEventListener("click", () => {
   if (!state.partSel) return;
   delete partOv(true).color;
-  markDirty(); renderLab(); syncHud();
+  markDirty(); renderLab();
 });
-$("#hud-hide").addEventListener("click", () => {
-  if (!state.partSel) return;
-  const o = partOv(true);
-  o.hidden = o.hidden === "yes" ? "no" : "yes";
-  markDirty(); renderLab(); syncHud();
+$("#lay-text").addEventListener("input", e => {
+  const sh = shapesFor().find(s => s.id === state.partSel);
+  if (!sh) return;
+  sh.text = e.target.value;
+  markDirty(); renderLab();
 });
-$("#hud-reset").addEventListener("click", () => {
+$("#lay-reset").addEventListener("click", () => {
   if (!state.partSel) return;
   const bag = state.spec.parts?.[state.face];
   if (bag) delete bag[state.partSel];
-  markDirty(); renderLab(); syncHud();
+  markDirty(); renderLab();
   toast("Element reset");
 });
-$("#hud-close").addEventListener("click", deselectPart);
-$("#hud-part").addEventListener("change", e => selectPart(e.target.value));
+$("#lay-delete").addEventListener("click", () => {
+  const arr = shapesFor(); const i = arr.findIndex(s => s.id === state.partSel);
+  if (i < 0) return;
+  arr.splice(i, 1);
+  const bag = state.spec.parts?.[state.face];
+  if (bag) delete bag[state.partSel];
+  state.partSel = null;
+  markDirty(); renderLab();
+  toast("Element removed");
+});
+$("#lay-done").addEventListener("click", deselectPart);
 addEventListener("keydown", e => { if (e.key === "Escape" && state.partSel) deselectPart(); });
 stage.addEventListener("wheel", e => {
   const f = artOf();
