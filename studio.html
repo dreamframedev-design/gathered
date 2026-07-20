@@ -190,7 +190,7 @@ svg{display:block}
   perspective:1300px;min-width:0;
 }
 #lab-stage .hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:#3E4761;white-space:nowrap}
-#lab-tile{width:min(270px,40vw);aspect-ratio:11/14.5;position:relative;transform-style:preserve-3d;transition:transform .8s var(--ease)}
+#lab-tile{width:min(340px,44vw);aspect-ratio:11/14.5;position:relative;transform-style:preserve-3d;transition:transform .8s var(--ease)}
 #lab-tile .face{
   position:absolute;inset:0;border-radius:12%/9%;backface-visibility:hidden;overflow:hidden;
   box-shadow:0 30px 60px -18px rgba(0,0,0,.65),inset 0 2px 2px rgba(255,255,255,.85),inset 0 -4px 7px rgba(120,100,60,.2),inset 0 0 0 1px rgba(120,100,60,.14);
@@ -1147,18 +1147,10 @@ function renderLab(){
     }
   }
 }
+/* The lab tile does not tilt on hover: an editing surface must hold still
+   for precise clicks, and a perpetually-animating 3D layer is what made the
+   engraving blurry (the GPU serves a stale low-res texture mid-animation). */
 const stage = $("#lab-stage"), labTile = $("#lab-tile");
-stage.addEventListener("mousemove", e => {
-  if (labFlipped || artDrag) return;
-  const rct = labTile.getBoundingClientRect();
-  const x = (e.clientX - rct.left)/rct.width - .5, y = (e.clientY - rct.top)/rct.height - .5;
-  labTile.style.transition = "transform .15s linear";
-  labTile.style.transform = `rotateY(${x*30}deg) rotateX(${-y*24}deg)`;
-});
-stage.addEventListener("mouseleave", () => {
-  labTile.style.transition = "transform .8s cubic-bezier(.22,.9,.28,1)";
-  labTile.style.transform = labFlipped ? "rotateY(180deg)" : "";
-});
 labTile.addEventListener("click", () => {
   if (squelchClick){ squelchClick = false; return; }
   labFlipped = !labFlipped;
