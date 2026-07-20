@@ -196,6 +196,10 @@ svg{display:block}
   box-shadow:0 30px 60px -18px rgba(0,0,0,.65),inset 0 2px 2px rgba(255,255,255,.85),inset 0 -4px 7px rgba(120,100,60,.2),inset 0 0 0 1px rgba(120,100,60,.14);
 }
 #lab-tile .face.back{transform:rotateY(180deg);box-shadow:0 30px 60px -18px rgba(0,0,0,.7),inset 0 2px 2px rgba(255,255,255,.14),inset 0 -4px 8px rgba(0,0,0,.5),inset 0 0 0 1px rgba(198,161,91,.3)}
+/* settled flip renders flat (no 3D transform) so the back stays crisp */
+#lab-tile.flat-back{transform:none!important}
+#lab-tile.flat-back .face.front{visibility:hidden}
+#lab-tile.flat-back .face.back{transform:none}
 /* engraving SVGs render at 2x and scale down so 3D tilt never blurs them */
 #lab-tile .face svg{position:absolute;left:0;top:0;max-width:none;width:200%;height:200%;transform:scale(.5);transform-origin:0 0}
 #lab-tile .face img.art{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
@@ -674,18 +678,26 @@ function facePartList(key, P){
     add("wan","萬 character",55,105,P.red, c => cjkText(55,116,34,c,"萬"));
   } else if (key==="b1"){
     add("num","Index numeral",17,20,P.red, c => numTag(1,c));
-    add("stem","Palm stem",55,93,P.green, c => `<g stroke="${c}"><path d="M55 122 C 55 96, 55 80, 55 62" fill="none" stroke-width="2.4" stroke-linecap="round"/><path d="M55 96 C 44 92, 36 84, 33 74 M55 84 C 66 80, 73 73, 76 64" fill="none" stroke-width="1.8" stroke-linecap="round"/></g>`);
-    add("bird","The bird",55,42,P.ink, c => `<g fill="${c}"><path d="${BIRD}"/><path d="M50 40 C 42 36, 38 30, 40 24 C 46 26, 50 32, 50 40 Z" opacity=".75"/></g><circle cx="60" cy="34" r="2" fill="${P.face}"/><path d="M69 35 L 79 34" stroke="${P.accent}" stroke-width="2" stroke-linecap="round"/>`);
+    add("stem","Palm stem",55,92,P.green, c => `<path d="M55 122 C 55 96, 55 80, 55 62" fill="none" stroke="${c}" stroke-width="2.4" stroke-linecap="round"/>`);
+    add("shootL","Left shoot",44,83,P.green, c => `<path d="M55 96 C 44 92, 36 84, 33 74" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round"/>`);
+    add("shootR","Right shoot",66,72,P.green, c => `<path d="M55 84 C 66 80, 73 73, 76 64" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round"/>`);
+    add("bird","Bird body",55,42,P.ink, c => `<path d="${BIRD}" fill="${c}"/>`);
+    add("wing","Wing",45,32,P.ink, c => `<path d="M50 40 C 42 36, 38 30, 40 24 C 46 26, 50 32, 50 40 Z" fill="${c}" opacity=".75"/>`);
+    add("eye","Eye",60,34,P.face, c => `<circle cx="60" cy="34" r="2" fill="${c}"/>`);
+    add("beak","Beak stroke",74,34.5,P.accent, c => `<path d="M69 35 L 79 34" stroke="${c}" stroke-width="2" stroke-linecap="round"/>`);
     add("sig","Signature g",88,130,P.accent, c => gTag(c));
-  } else if (key[0]==="b"){                    /* bams 2-9 */
+  } else if (key[0]==="b"){                    /* bams 2-9: every cane is its own element */
     const n = +key.slice(1);
     add("num","Index numeral",17,20,P.green, c => numTag(n,c));
-    add("canes","The canes",55,73,P.green, c => POS[n].map(([x,y]) => cane(x,y,c,posScale(n))).join(""));
+    POS[n].forEach(([x,y],i) => add("cane"+(i+1), "Cane "+(i+1), x, y, P.green, c => cane(x,y,c,posScale(n))));
     add("sig","Signature g",88,130,P.accent, c => gTag(c));
-  } else if (key[0]==="d" && !["drR","drG","drW"].includes(key)){ /* dots */
+  } else if (key[0]==="d" && !["drR","drG","drW"].includes(key)){ /* dots: every blossom is its own element */
     const n = +key.slice(1);
     add("num","Index numeral",17,20,P.ink, c => numTag(n,c));
-    add("blossoms","The blossoms",55,73,null, c => POS[n].map(([x,y]) => rosette(x,y, c || [P.ink,P.red,P.green][(x+y)%3===0?2:(x>55?1:0)], posScale(n))).join(""));
+    POS[n].forEach(([x,y],i) => {
+      const def = [P.ink,P.red,P.green][(x+y)%3===0?2:(x>55?1:0)];
+      add("blossom"+(i+1), "Blossom "+(i+1), x, y, def, c => rosette(x,y,c,posScale(n)));
+    });
     add("sig","Signature g",88,130,P.accent, c => gTag(c));
   } else if (key[0]==="w"){                    /* winds */
     const ch = {wE:"東",wS:"南",wW:"西",wN:"北"}[key];
@@ -705,12 +717,30 @@ function facePartList(key, P){
     add("frond2","Gold frond",76,68,P.accent, c => `<g stroke="${c}" fill="none" stroke-linecap="round" transform="translate(48,18) scale(.72)" opacity=".85"><path stroke-width="2" d="${FROND}"/></g>`);
     add("sig","palm no.1 signature",70,130,P.accent, c => `<text x="96" y="134" text-anchor="end" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="12" fill="${c}">palm no.1</text>`);
   } else if (key==="jk"){
-    add("ring","Brass ring",55,53,P.accent, c => `<circle cx="55" cy="53" r="27" fill="none" stroke="${c}" stroke-width="1.6"/><circle cx="55" cy="53" r="23" fill="none" stroke="${c}" stroke-width=".7" opacity=".45"/>`);
+    add("ring","Outer ring",55,53,P.accent, c => `<circle cx="55" cy="53" r="27" fill="none" stroke="${c}" stroke-width="1.6"/>`);
+    add("ring2","Inner ring",55,53,P.accent, c => `<circle cx="55" cy="53" r="23" fill="none" stroke="${c}" stroke-width=".7" opacity=".45"/>`);
     add("mono","The G",55,53,P.ink, c => `<text x="55" y="65.5" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="35" fill="${c}">G</text>`);
-    add("fronds","Crossed fronds",55,106,P.green, c => `<g stroke="${c}" fill="none" stroke-linecap="round" transform="translate(49.6,86) scale(.3)"><path stroke-width="2.6" d="${FROND}"/></g><g stroke="${c}" fill="none" stroke-linecap="round" transform="translate(60.4,86) scale(-.3,.3)"><path stroke-width="2.6" d="${FROND}"/></g>`);
+    add("frondL","Left frond",50,106,P.green, c => `<g stroke="${c}" fill="none" stroke-linecap="round" transform="translate(60.4,86) scale(-.3,.3)"><path stroke-width="2.6" d="${FROND}"/></g>`);
+    add("frondR","Right frond",61,106,P.green, c => `<g stroke="${c}" fill="none" stroke-linecap="round" transform="translate(49.6,86) scale(.3)"><path stroke-width="2.6" d="${FROND}"/></g>`);
     add("label","JOKER label",55,133,P.accent, c => `<text x="56.6" y="136.5" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-size="9.5" letter-spacing="3.2" fill="${c}">JOKER</text>`);
   }
   return L;
+}
+/* older specs grouped these elements; spread their overrides onto the new atomic parts */
+function migrateParts(parts){
+  const copy = (bag, from, tos) => {
+    const o = bag && bag[from]; if (!o) return;
+    tos.forEach(t => { if (!bag[t]) bag[t] = { ...o }; });
+    delete bag[from];
+  };
+  for (const key in parts){
+    const bag = parts[key];
+    if (key === "b1"){ copy(bag, "bird", ["wing","eye","beak"] ); if (bag.wing && !bag.bird) bag.bird = { ...bag.wing }; copy(bag, "stem", ["shootL","shootR"]); if (bag.shootL && !bag.stem) bag.stem = { ...bag.shootL }; }
+    if (key === "jk"){ copy(bag, "fronds", ["frondL","frondR"]); const r = bag.ring; if (r && !bag.ring2) bag.ring2 = { ...r }; }
+    if (key[0]==="b" && key!=="b1") copy(bag, "canes", Array.from({length:9},(_,i)=>"cane"+(i+1)));
+    if (key[0]==="d" && !["drR","drG","drW"].includes(key)) copy(bag, "blossoms", Array.from({length:9},(_,i)=>"blossom"+(i+1)));
+  }
+  return parts;
 }
 function partTransform(pt, o){
   return `translate(${o.x||0} ${o.y||0}) translate(${pt.cx} ${pt.cy}) rotate(${o.r||0}) scale(${(o.s||100)/100}) translate(${-pt.cx} ${-pt.cy})`;
@@ -906,7 +936,7 @@ async function loadVersion(vid, opts={}){
 }
 function normalizeSpec(s){
   const d = DEFAULT_SPEC();
-  return { pal:{...d.pal, ...(s?.pal||{})}, geo:{...d.geo, ...(s?.geo||{})}, mat:{...d.mat, ...(s?.mat||{})}, faces:{...(s?.faces||{})}, parts:{...(s?.parts||{})} };
+  return { pal:{...d.pal, ...(s?.pal||{})}, geo:{...d.geo, ...(s?.geo||{})}, mat:{...d.mat, ...(s?.mat||{})}, faces:{...(s?.faces||{})}, parts:migrateParts({...(s?.parts||{})}) };
 }
 async function saveVersion(){
   if (!state.design) return;
@@ -1130,6 +1160,7 @@ function renderLab(){
   front.innerHTML = faceHTML(state.face);
   back.innerHTML = backSVG(P);
   tile.style.transform = labFlipped ? "rotateY(180deg)" : "";
+  if (!labFlipped) tile.classList.remove("flat-back");
   /* refresh facebar engravings if palette changed */
   $$("#facebar .fbtn").forEach(b => {
     b.querySelector("svg")?.remove();
@@ -1147,15 +1178,40 @@ function renderLab(){
     }
   }
 }
-/* The lab tile does not tilt on hover: an editing surface must hold still
-   for precise clicks, and a perpetually-animating 3D layer is what made the
-   engraving blurry (the GPU serves a stale low-res texture mid-animation). */
+/* Subtle tilt, applied directly per frame with NO transition: the tile is
+   static the instant the mouse rests, so the GPU re-rasterizes it crisp.
+   (A continuously-transitioning transform is what caused the hover blur.)
+   The tile holds perfectly still while an element is selected or dragged. */
 const stage = $("#lab-stage"), labTile = $("#lab-tile");
+let tiltRAF = 0;
+stage.addEventListener("mousemove", e => {
+  if (labFlipped || artDrag || partDrag || state.partSel) return;
+  cancelAnimationFrame(tiltRAF);
+  tiltRAF = requestAnimationFrame(() => {
+    const rct = labTile.getBoundingClientRect();
+    const x = (e.clientX - rct.left)/rct.width - .5, y = (e.clientY - rct.top)/rct.height - .5;
+    labTile.style.transition = "none";
+    labTile.style.transform = `rotateY(${(x*10).toFixed(2)}deg) rotateX(${(-y*8).toFixed(2)}deg)`;
+  });
+});
+stage.addEventListener("mouseleave", () => {
+  if (labFlipped) return;
+  labTile.style.transition = "transform .8s cubic-bezier(.22,.9,.28,1)";
+  labTile.style.transform = "";
+});
 labTile.addEventListener("click", () => {
   if (squelchClick){ squelchClick = false; return; }
   labFlipped = !labFlipped;
+  if (!labFlipped && labTile.classList.contains("flat-back")){
+    labTile.classList.remove("flat-back");     /* return to the 3D 180° pose... */
+    void labTile.offsetWidth;                  /* ...then animate home from there */
+  }
   labTile.style.transition = "transform .8s cubic-bezier(.22,.9,.28,1)";
   labTile.style.transform = labFlipped ? "rotateY(180deg)" : "";
+});
+/* once the flip settles, drop to a flat 2D pose so the back renders crisp */
+labTile.addEventListener("transitionend", e => {
+  if (e.propertyName === "transform") labTile.classList.toggle("flat-back", labFlipped);
 });
 
 /* ----- direct manipulation: drag the painting, scroll to size it ----- */
@@ -1244,6 +1300,9 @@ function partOv(create){
 }
 function selectPart(id){
   state.partSel = id;
+  /* editing surface comes to rest */
+  labTile.style.transition = "transform .5s cubic-bezier(.22,.9,.28,1)";
+  labTile.style.transform = "";
   $$("#lab-front [data-part]").forEach(el => el.classList.toggle("sel", el.dataset.part === id));
   syncHud();
 }
