@@ -7,9 +7,21 @@ Founded by Kelly, Jill, and Nha; artwork by Nha Vuu; site by Conner.
 
 | File | What it is |
 |---|---|
-| `index.html` | The public site. Animated hero, story, Collection No. 001 showcase, the mat, VIP waitlist. Fully self-contained. |
+| `index.html` | The door. A password splash page at the main URL; the house password unlocks the site. |
+| `home.html` | The site behind the door. Animated hero, story, Collection No. 001 showcase, the mat, VIP waitlist. Fully self-contained. |
 | `studio.html` | The founders' design studio. Invitation-only login, tile lab with artwork uploads, full-set preview, table scene, mat designer, version history, PNG sheet export. |
 | `brand.html` | The house brand standard: marks, palette, letterforms, tile anatomy, voice. |
+
+## The door
+
+The main URL shows a splash gate. The house password (case-insensitive) is
+`gathered2026`; correct entries are SHA-256 hashed, remembered in the browser,
+and forwarded to `home.html`, which bounces locked visitors back to the door.
+`home.html` carries `noindex` while gated. This is front-of-house protection
+for a pre-launch, not security: anyone technical can read the files on a static
+host. If it ever needs to be airtight, use hosting-level auth
+(Netlify password / Cloudflare Access) instead. To change the password, put the
+new SHA-256 hash in both `index.html` and `home.html`.
 
 ## Backend
 

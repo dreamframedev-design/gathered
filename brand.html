@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gathered Brand Book | No. 001</title>
 <meta name="robots" content="noindex,nofollow">
-<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="4" y="2" width="56" height="60" rx="10" fill="%2314264E"/><text x="32" y="44" font-family="Georgia,serif" font-size="34" fill="%23C6A15B" text-anchor="middle">G</text></svg>'>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="8" y="1" width="48" height="62" rx="10" fill="%2314264E"/><rect x="13.5" y="6.5" width="37" height="51" rx="6" fill="none" stroke="%23C6A15B" stroke-width="1.5" opacity=".6"/><text x="32" y="45" font-family="Georgia,serif" font-style="italic" font-size="34" fill="%23C6A15B" text-anchor="middle">G</text></svg>'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -48,6 +48,7 @@ section{padding:90px 0;border-bottom:1px solid rgba(166,127,59,.18)}
   box-shadow:0 40px 80px -25px rgba(12,20,44,.55),inset 0 2px 2px rgba(255,255,255,.16),inset 0 -4px 8px rgba(0,0,0,.45),inset 0 0 0 1px rgba(198,161,91,.3);
   display:flex;align-items:center;justify-content:center;transform:rotate(-4deg);
   transition:transform .8s var(--ease)}
+.big-tile::after{content:"";position:absolute;inset:14px;border-radius:12px;border:1px solid rgba(198,161,91,.3)}
 .big-tile:hover{transform:rotate(0)}
 .big-tile span{font-family:var(--serif);font-style:italic;font-size:5rem;color:var(--brass)}
 
@@ -57,9 +58,11 @@ section{padding:90px 0;border-bottom:1px solid rgba(166,127,59,.18)}
 .mark-card .stage{height:130px;display:flex;align-items:center;justify-content:center;margin-bottom:22px}
 .mark-card h3{font-size:1.15rem;margin-bottom:8px}
 .mark-card p{font-size:.84rem;color:#6b675c}
-.m-tile{width:74px;height:96px;border-radius:10px;background:var(--indigo);display:flex;align-items:center;justify-content:center;
-  box-shadow:0 10px 24px rgba(20,38,78,.35),inset 0 0 0 1px rgba(198,161,91,.3)}
-.m-tile span{font-family:var(--serif);color:var(--brass);font-size:2.4rem}
+.m-tile{position:relative;width:74px;height:96px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(120% 90% at 30% 15%,#24396D 0%,var(--indigo) 60%,#0E1D3E 100%);
+  box-shadow:0 10px 24px rgba(20,38,78,.35),inset 0 1px 1px rgba(255,255,255,.14),inset 0 0 0 1px rgba(198,161,91,.35)}
+.m-tile::after{content:"";position:absolute;inset:6px;border-radius:6px;border:1px solid rgba(198,161,91,.3)}
+.m-tile span{font-family:var(--serif);font-style:italic;color:var(--brass);font-size:2.4rem;transform:translateY(-2px)}
 .m-word{font-family:var(--serif);font-size:2rem}
 .m-word em{font-style:italic;color:var(--brass-deep)}
 .m-seal{width:84px;height:84px;border-radius:50%;background:var(--clay);color:var(--bone);display:flex;align-items:center;justify-content:center;
@@ -138,7 +141,7 @@ footer a:hover{color:var(--brass-deep)}
     </div>
     <div class="marks">
       <div class="mark-card rv"><div class="stage"><div class="m-tile"><span>G</span></div></div>
-        <h3>The Tile</h3><p>Primary mark. Gallery blue backing, brass monogram. Use on covers, avatars, favicons, and wherever a single gesture must carry the brand.</p></div>
+        <h3>The Tile</h3><p>Primary mark. Gallery blue backing, double brass keyline, italic brass monogram. Use on covers, avatars, favicons, and wherever a single gesture must carry the brand.</p></div>
       <div class="mark-card rv" style="transition-delay:.1s"><div class="stage"><span class="m-word">Gathered <em>Mahjong</em></span></div>
         <h3>The Wordmark</h3><p>Fraunces, light weight, with the second word always in italic brass. Never set it in all caps; it is a name, not an acronym.</p></div>
       <div class="mark-card rv" style="transition-delay:.2s"><div class="stage"><div class="m-seal">聚</div></div>
@@ -247,7 +250,7 @@ footer a:hover{color:var(--brass-deep)}
 <footer class="wrap">
   <span>© <span id="yr">2026</span> Gathered Mahjong · The house standard, v1</span>
   <nav>
-    <a href="index.html">The site</a>
+    <a href="home.html">The site</a>
     <a href="studio.html">The studio</a>
     <a href="mailto:info@gatheredmahjong.com">Write to us</a>
   </nav>
