@@ -196,7 +196,38 @@ svg{display:block}
   box-shadow:0 30px 60px -18px rgba(0,0,0,.65),inset 0 2px 2px rgba(255,255,255,.85),inset 0 -4px 7px rgba(120,100,60,.2),inset 0 0 0 1px rgba(120,100,60,.14);
 }
 #lab-tile .face.back{transform:rotateY(180deg);box-shadow:0 30px 60px -18px rgba(0,0,0,.7),inset 0 2px 2px rgba(255,255,255,.14),inset 0 -4px 8px rgba(0,0,0,.5),inset 0 0 0 1px rgba(198,161,91,.3)}
-#lab-tile .face svg,#lab-tile .face img.art{position:absolute;inset:0;width:100%;height:100%}
+/* engraving SVGs render at 2x and scale down so 3D tilt never blurs them */
+#lab-tile .face svg{position:absolute;left:0;top:0;max-width:none;width:200%;height:200%;transform:scale(.5);transform-origin:0 0}
+#lab-tile .face img.art{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#lab-front [data-part]{cursor:pointer;pointer-events:bounding-box}
+#lab-front [data-part]:hover{filter:drop-shadow(0 0 2px rgba(198,161,91,.55))}
+#lab-front [data-part].sel{filter:drop-shadow(0 0 3px rgba(198,161,91,.95))}
+#part-hud{
+  position:absolute;top:16px;right:16px;width:232px;z-index:6;
+  background:rgba(11,24,52,.94);backdrop-filter:blur(12px);
+  border:1px solid var(--line2);border-radius:14px;padding:14px;
+  display:grid;gap:10px;box-shadow:0 18px 50px rgba(0,0,0,.5);
+}
+#part-hud[hidden]{display:none}
+.hud-head{display:flex;gap:8px;align-items:center}
+#hud-part{
+  flex:1;min-width:0;background:var(--indigo-deep);border:1px solid var(--line2);color:var(--ivory);
+  border-radius:8px;padding:7px 8px;font-size:.78rem;outline:none;
+}
+#hud-part:focus{border-color:var(--brass)}
+#hud-close{
+  flex:none;width:26px;height:26px;border-radius:50%;border:1px solid var(--line2);
+  background:none;color:#8E97AC;cursor:pointer;font-size:.95rem;line-height:1;
+  display:flex;align-items:center;justify-content:center;transition:color .3s,border-color .3s;
+}
+#hud-close:hover{color:var(--brass);border-color:var(--brass)}
+.hud-row{display:flex;gap:8px}
+.hud-mini{
+  flex:1;background:none;border:1px solid var(--line2);color:#B9C0D2;border-radius:8px;
+  padding:7px 8px;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;
+  transition:color .3s,border-color .3s;
+}
+.hud-mini:hover,.hud-mini.on{color:var(--brass);border-color:var(--brass)}
 #lab-tile.has-art{cursor:grab}
 #lab-tile.has-art:active{cursor:grabbing}
 #lab-tile.has-art .face.front::after{
@@ -414,6 +445,21 @@ img.art{object-fit:contain;pointer-events:none}
             <div class="face front" id="lab-front"></div>
             <div class="face back" id="lab-back"></div>
           </div>
+          <div id="part-hud" hidden>
+            <div class="hud-head">
+              <select id="hud-part" aria-label="Tile element"></select>
+              <button id="hud-close" title="Done editing" aria-label="Close element editor">&times;</button>
+            </div>
+            <div class="ctl"><label>Across</label><input type="range" id="hud-x" min="-55" max="55" value="0"><output>0</output></div>
+            <div class="ctl"><label>Up / down</label><input type="range" id="hud-y" min="-70" max="70" value="0"><output>0</output></div>
+            <div class="ctl"><label>Size</label><input type="range" id="hud-s" min="40" max="200" value="100"><output>100</output></div>
+            <div class="ctl"><label>Rotate</label><input type="range" id="hud-r" min="-90" max="90" value="0"><output>0</output></div>
+            <div class="ctl"><label>Ink</label><input type="color" id="hud-c"><button class="hud-mini" id="hud-c-auto" title="Back to the suit ink">auto</button></div>
+            <div class="hud-row">
+              <button class="hud-mini" id="hud-hide">Hide</button>
+              <button class="hud-mini" id="hud-reset">Reset element</button>
+            </div>
+          </div>
           <p class="hint">Move to tilt · Click to flip</p>
         </div>
         <div id="rail" class="scroll">
@@ -553,7 +599,8 @@ const DEFAULT_SPEC = () => ({
   pal: { face:"#F7F0DF", back:"#14264E", ink:"#14264E", green:"#41604E", red:"#A9502F", accent:"#C6A15B" },
   geo: { radius:12, depth:45 },
   mat: { color:"#14264E", keyline:"#C6A15B", mono:"Gathered", showMono:"yes" },
-  faces: {}   /* per-face artwork: {assetId, path, scale, x, y, rot, opacity, solo} */
+  faces: {},  /* per-face artwork: {assetId, path, scale, x, y, rot, opacity, solo} */
+  parts: {}   /* per-face engraving overrides: {faceKey:{partId:{x,y,s,r,color,hidden}}} */
 });
 
 /* face catalogue */
@@ -614,51 +661,67 @@ const numTag = (n,color) => `<text x="12" y="26" font-family="Fraunces,Georgia,s
 const gTag = accent => `<text x="86" y="134" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="13" fill="${accent}">g</text>`;
 const cjkText = (x,y,size,color,ch) => `<text x="${x}" y="${y}" text-anchor="middle" font-family="'Noto Serif TC','Songti TC','SimSun',serif" font-size="${size}" fill="${color}">${ch}</text>`;
 
-function faceSVG(key, P){
-  const dots = n => POS[n].map(([x,y]) => rosette(x,y,[P.ink,P.red,P.green][(x+y)%3===0?2:(x>55?1:0)] , posScale(n))).join("");
-  let body = "";
-  if (key[0]==="c" && key.length<=2){         /* craks */
+/* Every engraving element is a named part: selectable, movable, recolorable.
+   Overrides live in spec.parts[faceKey][partId] = {x,y,s,r,color,hidden}
+   so they save with versions and flow into the set view and PNG export. */
+function facePartList(key, P){
+  const L = [];
+  const add = (id, label, cx, cy, color, fn) => L.push({ id, label, cx, cy, color, fn });
+  if (key[0]==="c" && key.length<=2){          /* craks */
     const n = +key.slice(1);
-    body = numTag(n,P.red) + cjkText(55,66,40,P.ink,CN[n]) + cjkText(55,116,34,P.red,"萬");
-  } else if (key[0]==="b"){                    /* bams */
+    add("num","Index numeral",17,20,P.red, c => numTag(n,c));
+    add("glyph","Number character",55,52,P.ink, c => cjkText(55,66,40,c,CN[n]));
+    add("wan","萬 character",55,105,P.red, c => cjkText(55,116,34,c,"萬"));
+  } else if (key==="b1"){
+    add("num","Index numeral",17,20,P.red, c => numTag(1,c));
+    add("stem","Palm stem",55,93,P.green, c => `<g stroke="${c}"><path d="M55 122 C 55 96, 55 80, 55 62" fill="none" stroke-width="2.4" stroke-linecap="round"/><path d="M55 96 C 44 92, 36 84, 33 74 M55 84 C 66 80, 73 73, 76 64" fill="none" stroke-width="1.8" stroke-linecap="round"/></g>`);
+    add("bird","The bird",55,42,P.ink, c => `<g fill="${c}"><path d="${BIRD}"/><path d="M50 40 C 42 36, 38 30, 40 24 C 46 26, 50 32, 50 40 Z" opacity=".75"/></g><circle cx="60" cy="34" r="2" fill="${P.face}"/><path d="M69 35 L 79 34" stroke="${P.accent}" stroke-width="2" stroke-linecap="round"/>`);
+    add("sig","Signature g",88,130,P.accent, c => gTag(c));
+  } else if (key[0]==="b"){                    /* bams 2-9 */
     const n = +key.slice(1);
-    if (n===1){
-      body = numTag(1,P.red)
-        + `<g stroke="${P.green}"><path d="M55 122 C 55 96, 55 80, 55 62" fill="none" stroke-width="2.4" stroke-linecap="round"/>
-           <path d="M55 96 C 44 92, 36 84, 33 74 M55 84 C 66 80, 73 73, 76 64" fill="none" stroke-width="1.8" stroke-linecap="round"/></g>`
-        + `<g fill="${P.ink}"><path d="${BIRD}"/><path d="M50 40 C 42 36, 38 30, 40 24 C 46 26, 50 32, 50 40 Z" opacity=".75"/></g>`
-        + `<circle cx="60" cy="34" r="2" fill="${P.face}"/>`
-        + `<path d="M69 35 L 79 34" stroke="${P.accent}" stroke-width="2" stroke-linecap="round"/>` + gTag(P.accent);
-    } else {
-      body = numTag(n,P.green) + POS[n].map(([x,y]) => cane(x,y,P.green,posScale(n))).join("") + gTag(P.accent);
-    }
-  } else if (key[0]==="d" && key!=="drR" && key!=="drG" && key!=="drW"){ /* dots */
+    add("num","Index numeral",17,20,P.green, c => numTag(n,c));
+    add("canes","The canes",55,73,P.green, c => POS[n].map(([x,y]) => cane(x,y,c,posScale(n))).join(""));
+    add("sig","Signature g",88,130,P.accent, c => gTag(c));
+  } else if (key[0]==="d" && !["drR","drG","drW"].includes(key)){ /* dots */
     const n = +key.slice(1);
-    body = numTag(n,P.ink) + dots(n) + gTag(P.accent);
+    add("num","Index numeral",17,20,P.ink, c => numTag(n,c));
+    add("blossoms","The blossoms",55,73,null, c => POS[n].map(([x,y]) => rosette(x,y, c || [P.ink,P.red,P.green][(x+y)%3===0?2:(x>55?1:0)], posScale(n))).join(""));
+    add("sig","Signature g",88,130,P.accent, c => gTag(c));
   } else if (key[0]==="w"){                    /* winds */
     const ch = {wE:"東",wS:"南",wW:"西",wN:"北"}[key];
     const en = {wE:"E",wS:"S",wW:"W",wN:"N"}[key];
-    body = `<text x="14" y="28" font-family="Fraunces,Georgia,serif" font-size="15" letter-spacing="1" fill="${P.ink}">${en}</text>`
-      + cjkText(55,92,52,P.ink,ch) + `<path d="M30 116 H 80" stroke="${P.accent}" stroke-width="1.4"/>`;
-  } else if (key==="drR"){
-    body = cjkText(55,90,54,P.red,"中") + `<path d="M30 112 H 80" stroke="${P.red}" stroke-width="1.4" opacity=".6"/>`;
-  } else if (key==="drG"){
-    body = cjkText(55,90,54,P.green,"發") + `<path d="M30 112 H 80" stroke="${P.green}" stroke-width="1.4" opacity=".6"/>`;
+    add("letter","Wind letter",18,23,P.ink, c => `<text x="14" y="28" font-family="Fraunces,Georgia,serif" font-size="15" letter-spacing="1" fill="${c}">${en}</text>`);
+    add("glyph","Wind character",55,74,P.ink, c => cjkText(55,92,52,c,ch));
+    add("line","Brass rule",55,116,P.accent, c => `<path d="M30 116 H 80" stroke="${c}" stroke-width="1.4"/>`);
+  } else if (key==="drR" || key==="drG"){
+    const col = key==="drR" ? P.red : P.green, ch = key==="drR" ? "中" : "發";
+    add("glyph","Dragon character",55,71,col, c => cjkText(55,90,54,c,ch));
+    add("line","Underline",55,112,col, c => `<path d="M30 112 H 80" stroke="${c}" stroke-width="1.4" opacity=".6"/>`);
   } else if (key==="drW"){
-    body = `<rect x="26" y="30" width="58" height="84" rx="6" fill="none" stroke="${P.ink}" stroke-width="2.4"/>
-      <rect x="36" y="42" width="38" height="60" rx="3" fill="none" stroke="${P.accent}" stroke-width="1.4"/>`;
+    add("frame","Outer frame",55,72,P.ink, c => `<rect x="26" y="30" width="58" height="84" rx="6" fill="none" stroke="${c}" stroke-width="2.4"/>`);
+    add("inner","Inner frame",55,72,P.accent, c => `<rect x="36" y="42" width="38" height="60" rx="3" fill="none" stroke="${c}" stroke-width="1.4"/>`);
   } else if (key==="fl"){
-    body = `<g stroke="${P.green}" fill="none" stroke-linecap="round" transform="translate(24,6)"><path stroke-width="2" d="${FROND}"/></g>
-      <g stroke="${P.accent}" fill="none" stroke-linecap="round" transform="translate(48,18) scale(.72)" opacity=".85"><path stroke-width="2" d="${FROND}"/></g>
-      <text x="96" y="134" text-anchor="end" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="12" fill="${P.accent}">palm no.1</text>`;
+    add("frond1","Green frond",52,57,P.green, c => `<g stroke="${c}" fill="none" stroke-linecap="round" transform="translate(24,6)"><path stroke-width="2" d="${FROND}"/></g>`);
+    add("frond2","Gold frond",76,68,P.accent, c => `<g stroke="${c}" fill="none" stroke-linecap="round" transform="translate(48,18) scale(.72)" opacity=".85"><path stroke-width="2" d="${FROND}"/></g>`);
+    add("sig","palm no.1 signature",70,130,P.accent, c => `<text x="96" y="134" text-anchor="end" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="12" fill="${c}">palm no.1</text>`);
   } else if (key==="jk"){
-    body = `<circle cx="55" cy="53" r="27" fill="none" stroke="${P.accent}" stroke-width="1.6"/>
-      <circle cx="55" cy="53" r="23" fill="none" stroke="${P.accent}" stroke-width=".7" opacity=".45"/>
-      <text x="55" y="65.5" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="35" fill="${P.ink}">G</text>
-      <g stroke="${P.green}" fill="none" stroke-linecap="round" transform="translate(49.6,86) scale(.3)"><path stroke-width="2.6" d="${FROND}"/></g>
-      <g stroke="${P.green}" fill="none" stroke-linecap="round" transform="translate(60.4,86) scale(-.3,.3)"><path stroke-width="2.6" d="${FROND}"/></g>
-      <text x="56.6" y="136.5" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-size="9.5" letter-spacing="3.2" fill="${P.accent}">JOKER</text>`;
+    add("ring","Brass ring",55,53,P.accent, c => `<circle cx="55" cy="53" r="27" fill="none" stroke="${c}" stroke-width="1.6"/><circle cx="55" cy="53" r="23" fill="none" stroke="${c}" stroke-width=".7" opacity=".45"/>`);
+    add("mono","The G",55,53,P.ink, c => `<text x="55" y="65.5" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="35" fill="${c}">G</text>`);
+    add("fronds","Crossed fronds",55,106,P.green, c => `<g stroke="${c}" fill="none" stroke-linecap="round" transform="translate(49.6,86) scale(.3)"><path stroke-width="2.6" d="${FROND}"/></g><g stroke="${c}" fill="none" stroke-linecap="round" transform="translate(60.4,86) scale(-.3,.3)"><path stroke-width="2.6" d="${FROND}"/></g>`);
+    add("label","JOKER label",55,133,P.accent, c => `<text x="56.6" y="136.5" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-size="9.5" letter-spacing="3.2" fill="${c}">JOKER</text>`);
   }
+  return L;
+}
+function partTransform(pt, o){
+  return `translate(${o.x||0} ${o.y||0}) translate(${pt.cx} ${pt.cy}) rotate(${o.r||0}) scale(${(o.s||100)/100}) translate(${-pt.cx} ${-pt.cy})`;
+}
+function faceSVG(key, P){
+  const ov = (state.spec.parts||{})[key] || {};
+  const body = facePartList(key, P).map(pt => {
+    const o = ov[pt.id] || {};
+    if (o.hidden === "yes") return "";
+    return `<g class="part" data-part="${pt.id}" transform="${partTransform(pt,o)}">${pt.fn(o.color || pt.color)}</g>`;
+  }).join("");
   const inkOp = .62 + .38*(state.spec.geo.depth/100);
   return `<svg viewBox="0 0 110 145" xmlns="http://www.w3.org/2000/svg"><g opacity="${inkOp}">${body}</g></svg>`;
 }
@@ -704,7 +767,8 @@ const state = {
   assetUrls: {},       /* storage_path -> signed url */
   dirty: false,
   setMode: "unique",
-  isAdmin: false
+  isAdmin: false,
+  partSel: null        /* selected engraving part in the lab */
 };
 function markDirty(){
   state.dirty = true;
@@ -842,7 +906,7 @@ async function loadVersion(vid, opts={}){
 }
 function normalizeSpec(s){
   const d = DEFAULT_SPEC();
-  return { pal:{...d.pal, ...(s?.pal||{})}, geo:{...d.geo, ...(s?.geo||{})}, mat:{...d.mat, ...(s?.mat||{})}, faces:{...(s?.faces||{})} };
+  return { pal:{...d.pal, ...(s?.pal||{})}, geo:{...d.geo, ...(s?.geo||{})}, mat:{...d.mat, ...(s?.mat||{})}, faces:{...(s?.faces||{})}, parts:{...(s?.parts||{})} };
 }
 async function saveVersion(){
   if (!state.design) return;
@@ -1073,6 +1137,15 @@ function renderLab(){
     b.querySelector("svg").style.background = faceBG(P);
   });
   labHint();
+  /* keep the element selection alive across rerenders */
+  if (state.partSel){
+    if (!facePartList(state.face, P).some(p => p.id === state.partSel)) deselectPart();
+    else {
+      const el = document.querySelector(`#lab-front [data-part="${state.partSel}"]`);
+      if (el) el.classList.add("sel");
+      syncHud();
+    }
+  }
 }
 const stage = $("#lab-stage"), labTile = $("#lab-tile");
 stage.addEventListener("mousemove", e => {
@@ -1098,8 +1171,8 @@ const artOf = () => { const f = state.spec.faces[state.face]; return f && f.path
 function labHint(){
   const hint = $("#lab-stage .hint");
   if (hint) hint.textContent = artOf()
-    ? "Drag the painting to place it · Scroll to size it · Click to flip"
-    : "Move to tilt · Click to flip";
+    ? "Click any element to edit it · Drag the painting to place it · Scroll to size it"
+    : "Click any element to edit it · Click empty tile to flip";
   labTile.classList.toggle("has-art", !!artOf());
 }
 function paintArt(f){
@@ -1107,15 +1180,43 @@ function paintArt(f){
   if (im) im.style.transform =
     `translate(${f.x||0}%, ${f.y||0}%) rotate(${f.rot||0}deg) scale(${(f.scale||100)/100})`;
 }
-let artDrag = null, squelchClick = false;
+let artDrag = null, partDrag = null, squelchClick = false;
 labTile.addEventListener("pointerdown", e => {
+  if (labFlipped) return;
+  const partEl = e.target.closest && e.target.closest("[data-part]");
+  if (partEl && $("#lab-front").contains(partEl)){
+    selectPart(partEl.dataset.part);
+    squelchClick = true;                        /* selecting never flips */
+    const rct = labTile.getBoundingClientRect();
+    const o = partOv(false);
+    partDrag = { x0:e.clientX, y0:e.clientY, ox:o.x||0, oy:o.y||0, w:rct.width, moved:false };
+    labTile.setPointerCapture(e.pointerId);
+    return;
+  }
   const f = artOf();
-  if (!f || labFlipped) return;
+  if (!f) return;
   const rct = labTile.getBoundingClientRect();
   artDrag = { x0:e.clientX, y0:e.clientY, ax:f.x||0, ay:f.y||0, w:rct.width, h:rct.height, moved:false };
   labTile.setPointerCapture(e.pointerId);
 });
 labTile.addEventListener("pointermove", e => {
+  if (partDrag){
+    const dx = e.clientX - partDrag.x0, dy = e.clientY - partDrag.y0;
+    if (!partDrag.moved && Math.abs(dx) + Math.abs(dy) < 3) return;
+    partDrag.moved = true;
+    const o = partOv(true);
+    o.x = Math.round(Math.max(-55, Math.min(55, partDrag.ox + dx / partDrag.w * 110)));
+    o.y = Math.round(Math.max(-70, Math.min(70, partDrag.oy + dy / partDrag.w * 110)));
+    labTile.style.transition = "none"; labTile.style.transform = "";
+    const el = $(`#lab-front [data-part="${state.partSel}"]`);
+    const def = partsFor().find(p => p.id === state.partSel);
+    if (el && def) el.setAttribute("transform", partTransform(def, o));
+    const hx = $("#hud-x"), hy = $("#hud-y");
+    hx.value = o.x; hx.nextElementSibling.textContent = o.x;
+    hy.value = o.y; hy.nextElementSibling.textContent = o.y;
+    markDirty();
+    return;
+  }
   if (!artDrag) return;
   const dx = e.clientX - artDrag.x0, dy = e.clientY - artDrag.y0;
   if (!artDrag.moved && Math.abs(dx) + Math.abs(dy) < 4) return;
@@ -1127,11 +1228,88 @@ labTile.addEventListener("pointermove", e => {
   paintArt(f); syncControls(); markDirty();
 });
 labTile.addEventListener("pointerup", () => {
+  if (partDrag){
+    if (partDrag.moved) renderLab();
+    partDrag = null;
+    return;
+  }
   if (!artDrag) return;
   if (artDrag.moved){ squelchClick = true; renderLab(); }
   artDrag = null;
 });
-labTile.addEventListener("pointercancel", () => { artDrag = null; });
+labTile.addEventListener("pointercancel", () => { artDrag = null; partDrag = null; });
+
+/* ----- element editor HUD ----- */
+const hud = $("#part-hud");
+function partsFor(){ return facePartList(state.face, state.spec.pal); }
+function partOv(create){
+  const sp = state.spec;
+  if (!sp.parts) sp.parts = {};
+  if (!sp.parts[state.face]) sp.parts[state.face] = {};
+  const bag = sp.parts[state.face];
+  if (!bag[state.partSel] && create) bag[state.partSel] = {};
+  return bag[state.partSel] || {};
+}
+function selectPart(id){
+  state.partSel = id;
+  $$("#lab-front [data-part]").forEach(el => el.classList.toggle("sel", el.dataset.part === id));
+  syncHud();
+}
+function deselectPart(){
+  state.partSel = null;
+  $$("#lab-front [data-part].sel").forEach(el => el.classList.remove("sel"));
+  hud.hidden = true;
+}
+function syncHud(){
+  if (!state.partSel){ hud.hidden = true; return; }
+  const defs = partsFor();
+  const def = defs.find(p => p.id === state.partSel);
+  if (!def){ deselectPart(); return; }
+  $("#hud-part").innerHTML = defs.map(p =>
+    `<option value="${p.id}"${p.id===state.partSel?" selected":""}>${p.label}</option>`).join("");
+  const o = partOv(false);
+  const set = (sel,v) => { const el = $(sel); el.value = v; if (el.nextElementSibling) el.nextElementSibling.textContent = v; };
+  set("#hud-x", o.x||0); set("#hud-y", o.y||0); set("#hud-s", o.s||100); set("#hud-r", o.r||0);
+  $("#hud-c").value = o.color || def.color || state.spec.pal.ink;
+  const hideBtn = $("#hud-hide");
+  hideBtn.classList.toggle("on", o.hidden === "yes");
+  hideBtn.textContent = o.hidden === "yes" ? "Show" : "Hide";
+  hud.hidden = false;
+}
+[["#hud-x","x"],["#hud-y","y"],["#hud-s","s"],["#hud-r","r"]].forEach(([sel,prop]) => {
+  $(sel).addEventListener("input", e => {
+    if (!state.partSel) return;
+    partOv(true)[prop] = +e.target.value;
+    e.target.nextElementSibling.textContent = e.target.value;
+    markDirty(); renderLab();
+  });
+});
+$("#hud-c").addEventListener("input", e => {
+  if (!state.partSel) return;
+  partOv(true).color = e.target.value;
+  markDirty(); renderLab();
+});
+$("#hud-c-auto").addEventListener("click", () => {
+  if (!state.partSel) return;
+  delete partOv(true).color;
+  markDirty(); renderLab(); syncHud();
+});
+$("#hud-hide").addEventListener("click", () => {
+  if (!state.partSel) return;
+  const o = partOv(true);
+  o.hidden = o.hidden === "yes" ? "no" : "yes";
+  markDirty(); renderLab(); syncHud();
+});
+$("#hud-reset").addEventListener("click", () => {
+  if (!state.partSel) return;
+  const bag = state.spec.parts?.[state.face];
+  if (bag) delete bag[state.partSel];
+  markDirty(); renderLab(); syncHud();
+  toast("Element reset");
+});
+$("#hud-close").addEventListener("click", deselectPart);
+$("#hud-part").addEventListener("change", e => selectPart(e.target.value));
+addEventListener("keydown", e => { if (e.key === "Escape" && state.partSel) deselectPart(); });
 stage.addEventListener("wheel", e => {
   const f = artOf();
   if (!f || labFlipped) return;

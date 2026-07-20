@@ -236,7 +236,8 @@ nav.links a.cta:focus-visible,.btn:focus-visible{border-radius:100px}
     inset 0 0 0 1px rgba(198,161,91,.25);
   display:flex;align-items:center;justify-content:center;
 }
-.face svg{width:100%;height:100%}
+/* render engravings at 2x and scale down so 3D flips and tilts stay crisp */
+.face svg{position:absolute;left:0;top:0;max-width:none;width:200%;height:200%;transform:scale(.5);transform-origin:0 0}
 .tile .cjk{font-family:var(--cjk)}
 
 /* ============ marquee ============ */
