@@ -27,7 +27,7 @@ svg{display:block}
 .wrap{width:min(1040px,92vw);margin-inline:auto}
 .label{font-size:.7rem;font-weight:500;letter-spacing:.32em;text-transform:uppercase;color:var(--brass-deep)}
 .rule{display:inline-block;width:44px;height:1px;background:var(--brass);vertical-align:middle;margin-right:14px}
-section{padding:90px 0;border-bottom:1px solid rgba(166,127,59,.18)}
+section{padding:clamp(64px,9vw,96px) 0;border-bottom:1px solid rgba(166,127,59,.18)}
 .sec-head{margin-bottom:50px}
 .sec-head .label{display:block;margin-bottom:14px}
 .sec-head h2{font-size:clamp(2rem,4vw,3rem)}
@@ -37,20 +37,27 @@ section{padding:90px 0;border-bottom:1px solid rgba(166,127,59,.18)}
 .rv.on{opacity:1;transform:none}
 
 /* cover */
-#cover{min-height:88svh;display:flex;align-items:center;border-bottom:1px solid rgba(166,127,59,.18)}
-#cover .inner{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center;width:100%}
-#cover h1{font-size:clamp(3rem,7vw,5.4rem)}
+#cover{padding:clamp(76px,13vh,130px) 0 0;border-bottom:1px solid rgba(166,127,59,.18)}
+#cover .inner{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(44px,6vw,84px);align-items:center}
+#cover h1{font-size:clamp(2.9rem,5.6vw,4.6rem);line-height:1.04;letter-spacing:-.01em;margin-top:24px;text-wrap:balance}
 #cover h1 em{font-style:italic;color:var(--brass-deep)}
-#cover .no{font-family:var(--serif);font-style:italic;color:#8a867a;margin-top:22px}
+#cover .no{
+  font-family:var(--serif);font-style:italic;color:#6b675c;
+  margin-top:26px;font-size:1.05rem;line-height:1.7;max-width:38ch;
+}
 #cover .markwall{display:flex;justify-content:center}
-.big-tile{width:min(230px,50vw);aspect-ratio:11/14.5;border-radius:22px;position:relative;
+.cover-foot{
+  display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+  margin-top:clamp(54px,9vh,92px);padding:24px 0;
+  border-top:1px solid rgba(166,127,59,.25);
+  font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:#8a867a;
+}
+.big-tile{width:min(250px,54vw);aspect-ratio:11/14.5;border-radius:22px;position:relative;overflow:hidden;
   background:radial-gradient(120% 90% at 30% 15%,#24396D 0%,var(--indigo) 55%,#0E1D3E 100%);
   box-shadow:0 40px 80px -25px rgba(12,20,44,.55),inset 0 2px 2px rgba(255,255,255,.16),inset 0 -4px 8px rgba(0,0,0,.45),inset 0 0 0 1px rgba(198,161,91,.3);
-  display:flex;align-items:center;justify-content:center;transform:rotate(-4deg);
-  transition:transform .8s var(--ease)}
-.big-tile::after{content:"";position:absolute;inset:14px;border-radius:12px;border:1px solid rgba(198,161,91,.3)}
+  transform:rotate(-4deg);transition:transform .8s var(--ease)}
 .big-tile:hover{transform:rotate(0)}
-.big-tile span{font-family:var(--serif);font-style:italic;font-size:5rem;color:var(--brass)}
+.big-tile svg{width:100%;height:100%}
 
 /* marks */
 .marks{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
@@ -125,10 +132,29 @@ footer a:hover{color:var(--brass-deep)}
   <div class="wrap inner">
     <div>
       <span class="label"><span class="rule"></span>Brand Book · No. 001</span>
-      <h1 style="margin-top:20px">Gathered<br><em>Mahjong</em></h1>
-      <p class="no">The house standard. How we look, speak, and set the table.<br>Kept by Kelly, Jill, Nha, and Conner.</p>
+      <h1>Gathered <em>Mahjong</em></h1>
+      <p class="no">The house standard. How we look, speak, and set the table.</p>
     </div>
-    <div class="markwall"><div class="big-tile"><span>G</span></div></div>
+    <div class="markwall">
+      <div class="big-tile" role="img" aria-label="The Gathered tile back: gallery blue with a brass keyline and ringed monogram">
+        <svg viewBox="0 0 110 145">
+          <rect x="9" y="9" width="92" height="127" rx="9" fill="none" stroke="#C6A15B" stroke-width="1.2" opacity=".6"/>
+          <rect x="14.5" y="14.5" width="81" height="116" rx="6" fill="none" stroke="#C6A15B" stroke-width=".6" opacity=".35"/>
+          <g stroke="#C6A15B" fill="none" stroke-linecap="round" opacity=".5">
+            <g transform="translate(50.7,20.4) scale(.22)"><path stroke-width="2.4" d="M8 130 C 30 90, 44 55, 50 12 M46 26 C 34 30, 24 40, 18 52 M48 22 C 58 28, 66 38, 70 50 M42 44 C 31 49, 23 58, 18 69 M44 40 C 54 46, 61 55, 65 66 M36 64 C 27 70, 21 78, 17 88 M38 60 C 47 66, 53 74, 56 84 M28 88 C 21 94, 16 101, 13 110 M30 84 C 38 90, 43 97, 45 106"/></g>
+            <g transform="translate(59.3,20.4) scale(-.22,.22)"><path stroke-width="2.4" d="M8 130 C 30 90, 44 55, 50 12 M46 26 C 34 30, 24 40, 18 52 M48 22 C 58 28, 66 38, 70 50 M42 44 C 31 49, 23 58, 18 69 M44 40 C 54 46, 61 55, 65 66 M36 64 C 27 70, 21 78, 17 88 M38 60 C 47 66, 53 74, 56 84 M28 88 C 21 94, 16 101, 13 110 M30 84 C 38 90, 43 97, 45 106"/></g>
+            <g transform="translate(50.7,124.6) scale(.22,-.22)"><path stroke-width="2.4" d="M8 130 C 30 90, 44 55, 50 12 M46 26 C 34 30, 24 40, 18 52 M48 22 C 58 28, 66 38, 70 50 M42 44 C 31 49, 23 58, 18 69 M44 40 C 54 46, 61 55, 65 66 M36 64 C 27 70, 21 78, 17 88 M38 60 C 47 66, 53 74, 56 84 M28 88 C 21 94, 16 101, 13 110 M30 84 C 38 90, 43 97, 45 106"/></g>
+            <g transform="translate(59.3,124.6) scale(-.22,-.22)"><path stroke-width="2.4" d="M8 130 C 30 90, 44 55, 50 12 M46 26 C 34 30, 24 40, 18 52 M48 22 C 58 28, 66 38, 70 50 M42 44 C 31 49, 23 58, 18 69 M44 40 C 54 46, 61 55, 65 66 M36 64 C 27 70, 21 78, 17 88 M38 60 C 47 66, 53 74, 56 84 M28 88 C 21 94, 16 101, 13 110 M30 84 C 38 90, 43 97, 45 106"/></g>
+          </g>
+          <circle cx="55" cy="72.5" r="19.5" fill="none" stroke="#C6A15B" stroke-width="1" opacity=".9"/>
+          <text x="55" y="81.5" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-style="italic" font-size="26" fill="#C6A15B">G</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="wrap cover-foot">
+    <span>Kept by Kelly · Jill · Nha · Conner</span>
+    <span>The house standard · v1</span>
   </div>
 </section>
 

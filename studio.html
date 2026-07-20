@@ -113,6 +113,13 @@ svg{display:block}
 #design-name:hover{border-color:var(--line2)}
 #design-name:focus{outline:none;border-color:var(--brass);background:rgba(251,247,238,.05)}
 #topbar .spacer{flex:1}
+.tbar-ico{
+  flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);background:transparent;
+  color:#8E97AC;font-size:1rem;line-height:1;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:color .3s,border-color .3s;
+}
+.tbar-ico:hover:not(:disabled){color:var(--brass);border-color:var(--brass)}
+.tbar-ico:disabled{opacity:.35;cursor:default}
 #savestate{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:#5E6880;white-space:nowrap}
 #savestate.dirty{color:var(--brass)}
 #whoami{font-size:.76rem;color:#8E97AC;white-space:nowrap}
@@ -190,6 +197,13 @@ svg{display:block}
 }
 #lab-tile .face.back{transform:rotateY(180deg);box-shadow:0 30px 60px -18px rgba(0,0,0,.7),inset 0 2px 2px rgba(255,255,255,.14),inset 0 -4px 8px rgba(0,0,0,.5),inset 0 0 0 1px rgba(198,161,91,.3)}
 #lab-tile .face svg,#lab-tile .face img.art{position:absolute;inset:0;width:100%;height:100%}
+#lab-tile.has-art{cursor:grab}
+#lab-tile.has-art:active{cursor:grabbing}
+#lab-tile.has-art .face.front::after{
+  content:"";position:absolute;inset:5%;border-radius:9%;pointer-events:none;
+  border:1px dashed rgba(198,161,91,0);transition:border-color .3s;
+}
+#lab-tile.has-art:hover .face.front::after{border-color:rgba(198,161,91,.45)}
 img.art{object-fit:contain;pointer-events:none}
 
 /* controls rail */
@@ -210,13 +224,19 @@ img.art{object-fit:contain;pointer-events:none}
   background:var(--indigo-deep);border:1px solid var(--line2);color:var(--ivory);border-radius:8px;
   padding:7px 10px;font-size:.8rem;outline:none;flex:1.4;
 }
-.preset-row{display:flex;gap:8px;flex-wrap:wrap}
+.preset-row{display:flex;gap:6px;flex-wrap:wrap}
 .preset{
-  width:34px;height:34px;border-radius:50%;border:2px solid transparent;cursor:pointer;
-  transition:transform .25s,border .25s;padding:0;
+  display:flex;flex-direction:column;align-items:center;gap:6px;width:58px;
+  background:none;border:none;padding:2px 0;cursor:pointer;
 }
-.preset:hover{transform:scale(1.12)}
-.preset.on{border-color:var(--brass)}
+.preset .pswatch{
+  width:34px;height:34px;border-radius:50%;border:2px solid transparent;
+  transition:transform .25s,border-color .25s;
+}
+.preset:hover .pswatch{transform:scale(1.1)}
+.preset.on .pswatch{border-color:var(--brass)}
+.preset .pname{font-size:.6rem;color:#8E97AC;letter-spacing:.03em;line-height:1.25;text-align:center}
+.preset.on .pname{color:var(--brass)}
 .art-drop{
   border:1.5px dashed var(--line);border-radius:14px;padding:18px 14px;text-align:center;
   font-size:.78rem;color:#8E97AC;cursor:pointer;transition:all .3s;
@@ -354,6 +374,8 @@ img.art{object-fit:contain;pointer-events:none}
     <span class="mark">G</span>
     <span class="word">Gathered <em>Studio</em></span>
     <input id="design-name" value="Untitled design" aria-label="Design name">
+    <button class="tbar-ico" id="undo-btn" title="Undo (Ctrl+Z)" aria-label="Undo" disabled>&#8634;</button>
+    <button class="tbar-ico" id="redo-btn" title="Redo (Ctrl+Shift+Z)" aria-label="Redo" disabled>&#8635;</button>
     <span id="savestate">saved</span>
     <div class="spacer"></div>
     <div id="tabs">
@@ -431,11 +453,13 @@ img.art{object-fit:contain;pointer-events:none}
             <div class="art-actions">
               <button class="btn btn-line" id="art-library">Library</button>
               <button class="btn btn-line" id="art-apply-suit">Apply to suit</button>
+              <button class="btn btn-line" id="art-center">Re-center</button>
               <button class="btn btn-ghost" id="art-clear">Clear</button>
             </div>
-            <div class="ctl"><label>Scale</label><input type="range" data-art="scale" min="20" max="200" value="100"><output>100</output></div>
-            <div class="ctl"><label>Position X</label><input type="range" data-art="x" min="-50" max="50" value="0"><output>0</output></div>
-            <div class="ctl"><label>Position Y</label><input type="range" data-art="y" min="-50" max="50" value="0"><output>0</output></div>
+            <p class="mini-note" style="color:var(--brass)">Tip: drag the painting on the big tile to place it, and scroll over it to size it.</p>
+            <div class="ctl"><label>Size</label><input type="range" data-art="scale" min="20" max="200" value="100"><output>100</output></div>
+            <div class="ctl"><label>Left / right</label><input type="range" data-art="x" min="-50" max="50" value="0"><output>0</output></div>
+            <div class="ctl"><label>Up / down</label><input type="range" data-art="y" min="-50" max="50" value="0"><output>0</output></div>
             <div class="ctl"><label>Rotate</label><input type="range" data-art="rot" min="-45" max="45" value="0"><output>0</output></div>
             <div class="ctl"><label>Opacity</label><input type="range" data-art="opacity" min="10" max="100" value="100"><output>100</output></div>
             <div class="ctl"><label>Hide engraving</label><select data-art="solo"><option value="no">No, layer over it</option><option value="yes">Yes, artwork only</option></select></div>
@@ -687,6 +711,7 @@ function markDirty(){
   $("#savestate").textContent = "unsaved changes";
   $("#savestate").classList.add("dirty");
   if (state.design) localStorage.setItem("gm_draft_"+state.design.id, JSON.stringify({ spec: state.spec, at: Date.now() }));
+  if (typeof histPush === "function") histPush();
 }
 function markSaved(){
   state.dirty = false;
@@ -796,6 +821,7 @@ async function selectDesign(id){
     state.spec = DEFAULT_SPEC(); markSaved();
   }
   renderDesignList(); renderVersionList(); syncControls(); rerenderView();
+  histReset();
   await refreshAssets();
 }
 function renderVersionList(){
@@ -810,6 +836,7 @@ async function loadVersion(vid, opts={}){
   state.spec = normalizeSpec(data.spec);
   state.loadedVersion = vid;
   markSaved(); renderVersionList(); syncControls(); rerenderView();
+  if (typeof histPush === "function") histPush();
   await hydrateArtUrls();
   if (!opts.silent) toast(`Loaded <b>v${data.version_no}</b>`);
 }
@@ -949,7 +976,7 @@ function buildPresets(){
   PRESETS.forEach((p,i) => {
     const b = document.createElement("button");
     b.className = "preset"; b.title = p.name;
-    b.style.background = `linear-gradient(135deg, ${p.pal.face} 0 45%, ${p.pal.back} 45% 100%)`;
+    b.innerHTML = `<span class="pswatch" style="background:linear-gradient(135deg, ${p.pal.face} 0 45%, ${p.pal.back} 45% 100%)"></span><span class="pname">${p.name}</span>`;
     b.addEventListener("click", () => {
       state.spec.pal = { ...p.pal };
       state.spec.mat = { ...state.spec.mat, color: p.pal.back, keyline: p.pal.accent };
@@ -1045,10 +1072,11 @@ function renderLab(){
     b.insertAdjacentHTML("beforeend", faceSVG(b.dataset.key, P));
     b.querySelector("svg").style.background = faceBG(P);
   });
+  labHint();
 }
 const stage = $("#lab-stage"), labTile = $("#lab-tile");
 stage.addEventListener("mousemove", e => {
-  if (labFlipped) return;
+  if (labFlipped || artDrag) return;
   const rct = labTile.getBoundingClientRect();
   const x = (e.clientX - rct.left)/rct.width - .5, y = (e.clientY - rct.top)/rct.height - .5;
   labTile.style.transition = "transform .15s linear";
@@ -1059,9 +1087,104 @@ stage.addEventListener("mouseleave", () => {
   labTile.style.transform = labFlipped ? "rotateY(180deg)" : "";
 });
 labTile.addEventListener("click", () => {
+  if (squelchClick){ squelchClick = false; return; }
   labFlipped = !labFlipped;
   labTile.style.transition = "transform .8s cubic-bezier(.22,.9,.28,1)";
   labTile.style.transform = labFlipped ? "rotateY(180deg)" : "";
+});
+
+/* ----- direct manipulation: drag the painting, scroll to size it ----- */
+const artOf = () => { const f = state.spec.faces[state.face]; return f && f.path ? f : null; };
+function labHint(){
+  const hint = $("#lab-stage .hint");
+  if (hint) hint.textContent = artOf()
+    ? "Drag the painting to place it · Scroll to size it · Click to flip"
+    : "Move to tilt · Click to flip";
+  labTile.classList.toggle("has-art", !!artOf());
+}
+function paintArt(f){
+  const im = $("#lab-front img.art");
+  if (im) im.style.transform =
+    `translate(${f.x||0}%, ${f.y||0}%) rotate(${f.rot||0}deg) scale(${(f.scale||100)/100})`;
+}
+let artDrag = null, squelchClick = false;
+labTile.addEventListener("pointerdown", e => {
+  const f = artOf();
+  if (!f || labFlipped) return;
+  const rct = labTile.getBoundingClientRect();
+  artDrag = { x0:e.clientX, y0:e.clientY, ax:f.x||0, ay:f.y||0, w:rct.width, h:rct.height, moved:false };
+  labTile.setPointerCapture(e.pointerId);
+});
+labTile.addEventListener("pointermove", e => {
+  if (!artDrag) return;
+  const dx = e.clientX - artDrag.x0, dy = e.clientY - artDrag.y0;
+  if (!artDrag.moved && Math.abs(dx) + Math.abs(dy) < 4) return;
+  artDrag.moved = true;
+  const f = artOf(); if (!f) return;
+  f.x = Math.max(-50, Math.min(50, Math.round(artDrag.ax + dx / artDrag.w * 100)));
+  f.y = Math.max(-50, Math.min(50, Math.round(artDrag.ay + dy / artDrag.h * 100)));
+  labTile.style.transition = "none"; labTile.style.transform = "";
+  paintArt(f); syncControls(); markDirty();
+});
+labTile.addEventListener("pointerup", () => {
+  if (!artDrag) return;
+  if (artDrag.moved){ squelchClick = true; renderLab(); }
+  artDrag = null;
+});
+labTile.addEventListener("pointercancel", () => { artDrag = null; });
+stage.addEventListener("wheel", e => {
+  const f = artOf();
+  if (!f || labFlipped) return;
+  e.preventDefault();
+  f.scale = Math.max(20, Math.min(200, Math.round((f.scale||100) - Math.sign(e.deltaY)*4)));
+  paintArt(f); syncControls(); markDirty();
+}, { passive:false });
+$("#art-center").addEventListener("click", () => {
+  const f = state.spec.faces[state.face]; if (!f?.path) return;
+  Object.assign(f, { x:0, y:0, rot:0, scale:100 });
+  syncControls(); markDirty(); renderLab();
+  toast("Painting re-centered");
+});
+
+/* ----- history: undo / redo ----- */
+const hist = { stack:[], idx:-1, muted:false, t:0 };
+function histButtons(){
+  $("#undo-btn").disabled = hist.idx <= 0;
+  $("#redo-btn").disabled = hist.idx >= hist.stack.length - 1;
+}
+function histReset(){
+  hist.stack = [JSON.stringify(state.spec)];
+  hist.idx = 0; hist.t = 0; histButtons();
+}
+function histPush(){
+  if (hist.muted || hist.idx < 0) return;
+  const snap = JSON.stringify(state.spec);
+  if (snap === hist.stack[hist.idx]) return;
+  const now = Date.now();
+  hist.stack.length = hist.idx + 1;
+  if (now - hist.t < 700 && hist.idx > 0) hist.stack[hist.idx] = snap;   /* coalesce slider bursts */
+  else { hist.stack.push(snap); hist.idx++; }
+  if (hist.stack.length > 80){ hist.stack.shift(); hist.idx--; }
+  hist.t = now; histButtons();
+}
+function histGo(dir){
+  const to = hist.idx + dir;
+  if (to < 0 || to >= hist.stack.length) return;
+  hist.idx = to; hist.t = 0;
+  hist.muted = true;
+  state.spec = normalizeSpec(JSON.parse(hist.stack[to]));
+  syncControls(); rerenderView(); markDirty();
+  hist.muted = false;
+  histButtons();
+}
+$("#undo-btn").addEventListener("click", () => histGo(-1));
+$("#redo-btn").addEventListener("click", () => histGo(1));
+addEventListener("keydown", e => {
+  if (!(e.ctrlKey || e.metaKey)) return;
+  if (e.target.matches("input[type=text],input[type=email],input[type=password],textarea,#design-name")) return;
+  const k = e.key.toLowerCase();
+  if (k === "z"){ e.preventDefault(); histGo(e.shiftKey ? 1 : -1); }
+  else if (k === "y"){ e.preventDefault(); histGo(1); }
 });
 
 /* ----- Full Set ----- */
