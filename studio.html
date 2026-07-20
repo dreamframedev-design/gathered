@@ -294,8 +294,18 @@ img.art{object-fit:contain;pointer-events:none}
 .asset-card .thumb{aspect-ratio:1;background:#0E1D3E center/contain no-repeat;display:flex;align-items:center;justify-content:center;color:#3E4761;font-size:.7rem}
 .asset-card p{font-size:.66rem;color:#8E97AC;padding:7px 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #team-list{list-style:none;display:grid;gap:8px;margin-bottom:16px}
-#team-list li{display:flex;justify-content:space-between;align-items:center;font-size:.84rem;color:#B9C0D2;background:rgba(251,247,238,.04);border-radius:10px;padding:10px 14px}
-#team-list li small{color:#5E6880}
+#team-list li{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.84rem;color:#B9C0D2;background:rgba(251,247,238,.04);border-radius:10px;padding:10px 14px}
+#team-list li small{color:#5E6880;margin-left:auto}
+.role-badge{
+  font-style:normal;font-size:.62rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--brass);border:1px solid rgba(198,161,91,.45);border-radius:100px;padding:2px 9px;margin-left:8px;
+}
+.team-kick{
+  flex:none;width:24px;height:24px;border-radius:50%;border:1px solid var(--line2);background:transparent;
+  color:#5E6880;font-size:.95rem;line-height:1;display:flex;align-items:center;justify-content:center;
+  transition:color .3s,border-color .3s;
+}
+.team-kick:hover{color:#D98B66;border-color:#D98B66}
 .team-add{display:flex;gap:10px}
 .team-add input{flex:1;background:rgba(251,247,238,.06);border:1px solid var(--line2);border-radius:10px;padding:11px 14px;color:var(--ivory);font-size:.86rem;outline:none}
 .team-add input:focus{border-color:var(--brass)}
@@ -480,7 +490,7 @@ img.art{object-fit:contain;pointer-events:none}
         <input type="email" id="team-email" placeholder="jill@example.com">
         <button class="btn btn-gold" id="team-add-btn">Invite</button>
       </div>
-      <p class="mini-note" style="margin-top:12px">Anyone listed here can sign in to the studio with their email. Add Jill and Nha when ready; remove anyone by asking Conner nicely.</p>
+      <p class="mini-note" id="team-note" style="margin-top:12px"></p>
     </div>
   </div>
 </div>
@@ -669,7 +679,8 @@ const state = {
   assets: [],
   assetUrls: {},       /* storage_path -> signed url */
   dirty: false,
-  setMode: "unique"
+  setMode: "unique",
+  isAdmin: false
 };
 function markDirty(){
   state.dirty = true;
@@ -731,7 +742,9 @@ async function enterStudio(user){
     return;
   }
   state.user = user;
-  $("#whoami").textContent = user.email;
+  const { data: isAdmin } = await sb.rpc("gm_is_admin");
+  state.isAdmin = !!isAdmin;
+  $("#whoami").textContent = user.email + (state.isAdmin ? " · owner" : "");
   $("#gate").classList.add("hidden");
   $("#studio").classList.add("on");
   await loadDesigns();
@@ -1141,8 +1154,17 @@ $$(".modal").forEach(m => m.addEventListener("click", e => { if (e.target === m)
 $("#open-team").addEventListener("click", async () => {
   const { data, error } = await sb.from("gm_allowlist").select("*").order("created_at");
   if (error) return toast(esc(error.message));
-  $("#team-list").innerHTML = data.map(m =>
-    `<li><span>${esc(m.display_name || m.email.split("@")[0])} · ${esc(m.email)}</span><small>${esc(m.added_by||"")}</small></li>`).join("");
+  $("#team-list").innerHTML = data.map(m => {
+    const self = m.email.toLowerCase() === state.user.email.toLowerCase();
+    const badge = m.role === "owner" ? `<em class="role-badge">Owner</em>` : "";
+    const kick = state.isAdmin && !self
+      ? `<button class="team-kick" data-email="${esc(m.email)}" title="Remove from the studio" aria-label="Remove ${esc(m.email)}">&times;</button>` : "";
+    return `<li><span>${esc(m.display_name || m.email.split("@")[0])} · ${esc(m.email)}${badge}</span><small>${esc(m.added_by||"")}</small>${kick}</li>`;
+  }).join("");
+  $(".team-add").style.display = state.isAdmin ? "" : "none";
+  $("#team-note").textContent = state.isAdmin
+    ? "Anyone listed here can sign in to the studio with their email. As owner, only you can add or remove founders."
+    : "Anyone listed here can sign in to the studio with their email. Only the owner can add or remove founders.";
   $("#modal-team").classList.add("on");
 });
 $("#team-add-btn").addEventListener("click", async () => {
@@ -1152,6 +1174,16 @@ $("#team-add-btn").addEventListener("click", async () => {
   if (error) return toast(esc(error.message));
   $("#team-email").value = "";
   toast("<b>" + esc(email) + "</b> can now enter the studio");
+  $("#open-team").click();
+});
+$("#team-list").addEventListener("click", async e => {
+  const b = e.target.closest(".team-kick");
+  if (!b) return;
+  const email = b.dataset.email;
+  if (!confirm("Remove " + email + " from the studio? They will lose access on their next sign-in.")) return;
+  const { error } = await sb.from("gm_allowlist").delete().eq("email", email);
+  if (error) return toast(esc(error.message));
+  toast("<b>" + esc(email) + "</b> no longer has studio access");
   $("#open-team").click();
 });
 $("#open-waitlist").addEventListener("click", async () => {
